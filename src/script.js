@@ -2,7 +2,7 @@ import './style.css'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 import * as dat from 'dat.gui'
 import gsap from 'gsap'
-import { AmbientLight, Color, Group, Mesh, MeshBasicMaterial, PerspectiveCamera, PlaneBufferGeometry, Scene, WebGLRenderer } from "three"
+import { AmbientLight, Color, Euler, Group, Mesh, MeshBasicMaterial, PerspectiveCamera, PlaneBufferGeometry, Quaternion, Scene, WebGLRenderer } from "three"
 
 /**
  * Base
@@ -19,6 +19,10 @@ gltfLoader.load("/models/Tunnel.glb", gltf => {
 
 // Canvas
 const canvas = document.querySelector('canvas.webgl')
+
+const leftQuaternion = new Quaternion().setFromEuler(new Euler(0, Math.PI * .5, 0))
+const rightQuaternion = new Quaternion().setFromEuler(new Euler(0, Math.PI * -.5, 0))
+const centerQuaternion = new Quaternion()
 
 // Scene
 const scene = new Scene()
@@ -49,14 +53,17 @@ const rearrangePictures = (activeIndex, withAnimation = true) => {
     rightIndices.forEach((pictureIndex, i) => {
         const child = slider.children[pictureIndex]
         setPosition(child, 2, 0, -i - 1, withAnimation)
+        setQuaternion(child, rightQuaternion, withAnimation)
     })
     leftIndices.forEach((pictureIndex, i) => {
         const child = slider.children[pictureIndex]
         setPosition(child, -2, 0, -i - 1, withAnimation)
+        setQuaternion(child, leftQuaternion, withAnimation)
     })
 
     const activeChild = slider.children[activeIndex]
-    setPosition(activeChild, 0, 1, 0, withAnimation)
+    setPosition(activeChild, 0, 0, 0, withAnimation)
+    setQuaternion(activeChild, centerQuaternion, withAnimation)
 }
 
 const setPosition = (mesh, x, y, z, withAnimation = true) => {
@@ -64,6 +71,22 @@ const setPosition = (mesh, x, y, z, withAnimation = true) => {
         gsap.to(mesh.position, { duration: 1, x, y, z })
     } else {
         mesh.position.set(x, y, z)
+    }
+}
+
+const setQuaternion = (mesh, quaternion, withAnimation = true) => {
+    if (withAnimation) {
+        const animationObject = { interpolator: 0 }
+        gsap.to(animationObject, {
+            duration: 1,
+            interpolator: 1,
+            onUpdateParams: [mesh.quaternion.clone()],
+            onUpdate(startQuaternion) {
+                mesh.quaternion.slerpQuaternions(startQuaternion, quaternion, animationObject.interpolator)
+            }
+        })
+    } else {
+        mesh.quaternion.copy(quaternion)
     }
 }
 

@@ -1,6 +1,7 @@
 import './style.css'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 import * as dat from 'dat.gui'
+import gsap from 'gsap'
 import { AmbientLight, Group, Mesh, MeshBasicMaterial, PerspectiveCamera, PlaneBufferGeometry, Scene, WebGLRenderer } from "three"
 
 /**
@@ -34,16 +35,40 @@ for (let i = 0; i < 11; i++) {
 }
 scene.add(slider)
 
+const previousPicture = _ => {
+    gsap.to(slider.position, { duration: 1, x: -1 })
+}
+const nextPicture = _ => {
+    gsap.to(slider.position, { duration: 1, x: 1 })
+}
+
+const rearrangePictures = activeIndex => {
+    const leftIndices = []
+    for (let i = 0; i < Math.floor(slider.children.length * .5); i++) {
+        leftIndices.push((activeIndex + i + 1) % numberOfPictures)
+    }
+    const rightIndices = []
+    for (let i = 0; i < Math.floor(slider.children.length * .5); i++) {
+        let index = activeIndex - i - 1
+        index = index < 0 ? index + numberOfPictures : index
+        rightIndices.push(index)
+    }
+}
+
 const previousButton = document.querySelector(".previous")
 const nextButton = document.querySelector(".next")
 let activePicture = 0
 previousButton.addEventListener("click", _ => {
     activePicture -= 1
     activePicture = activePicture < 0 ? activePicture + numberOfPictures : activePicture
+    rearrangePictures(activePicture)
+    previousPicture()
 })
 nextButton.addEventListener("click", _ => {
     activePicture += 1
     activePicture %= numberOfPictures
+    rearrangePictures(activePicture)
+    nextPicture()
 })
 
 /**

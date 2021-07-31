@@ -1,0 +1,10 @@
+.slider-button{
+    position: absolute;
+    top: 50%;
+}
+.previous{
+    left: 0;
+}
+.next{
+    right: 0;
+}

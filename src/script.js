@@ -28,10 +28,23 @@ scene.add(light)
 const slider = new Group()
 const pictureMaterial = new MeshBasicMaterial()
 const pictureGeometry = new PlaneBufferGeometry()
-for (let i = 0; i <= 10; i++) {
+const numberOfPictures = 11
+for (let i = 0; i < 11; i++) {
     slider.add(new Mesh(pictureGeometry, pictureMaterial))
 }
 scene.add(slider)
+
+const previousButton = document.querySelector(".previous")
+const nextButton = document.querySelector(".next")
+let activePicture = 0
+previousButton.addEventListener("click", _ => {
+    activePicture -= 1
+    activePicture = activePicture < 0 ? activePicture + numberOfPictures : activePicture
+})
+nextButton.addEventListener("click", _ => {
+    activePicture += 1
+    activePicture %= numberOfPictures
+})
 
 /**
  * Sizes

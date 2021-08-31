@@ -3,6 +3,7 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 import * as dat from 'dat.gui'
 import { AmbientLight, PerspectiveCamera, Scene, WebGLRenderer } from "three"
 import { Slider } from "./slider"
+import { CSS3DRenderer } from "three/examples/jsm/renderers/CSS3DRenderer"
 
 /**
  * Base
@@ -64,6 +65,7 @@ window.addEventListener('resize', () => {
 
     // Update renderer
     renderer.setSize(sizes.width, sizes.height)
+    cssRenderer.setSize(sizes.width, sizes.height)
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 })
 
@@ -82,8 +84,17 @@ gui.add(camera.position, "x", -2, 2, 0.001).name("camera x")
 const renderer = new WebGLRenderer({
     canvas: canvas
 })
+const cssRenderer = new CSS3DRenderer()
+
 renderer.setSize(sizes.width, sizes.height)
+cssRenderer.setSize(sizes.width, sizes.height)
+cssRenderer.domElement.style.position = 'absolute'
+cssRenderer.domElement.style.top = '0px'
+cssRenderer.domElement.style.left = '0px'
+cssRenderer.domElement.style.pointerEvents = 'none'
+document.body.appendChild(cssRenderer.domElement)
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+
 
 /**
  * Animate
@@ -91,6 +102,7 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 const tick = () => {
     // Render
     renderer.render(scene, camera)
+    cssRenderer.render(scene, camera)
 
     // Call tick again on the next frame
     window.requestAnimationFrame(tick)

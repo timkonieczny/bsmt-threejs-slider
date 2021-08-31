@@ -1,5 +1,6 @@
 import gsap from 'gsap'
 import { Color, Euler, Group, Mesh, MeshBasicMaterial, PlaneBufferGeometry, Quaternion } from "three"
+import { CSS3DObject } from "three/examples/jsm/renderers/CSS3DRenderer"
 
 export class Slider {
 
@@ -12,12 +13,27 @@ export class Slider {
         this.numberOfPictures = 11
         for (let i = 0; i < this.numberOfPictures; i++) {
             const pictureMaterial = new MeshBasicMaterial({ color: new Color(Math.random(), Math.random(), Math.random()) })
-            this.slider.add(new Mesh(pictureGeometry, pictureMaterial))
+            const mesh = new Mesh(pictureGeometry, pictureMaterial)
+            const group = new Group()
+            group.add(mesh)
+            const div = window.document.createElement('div')
+            div.classList.add('text')
+            div.innerHTML = `this is content`
+            const text = new CSS3DObject(div)
+            mesh.position.x = -.5
+            text.position.x = .5
+            text.scale.set(0.01, 0.01, 1)
+            group.add(text)
+            this.slider.add(group)
         }
         scene.add(this.slider)
     }
 
     rearrangePictures(activeIndex, withAnimation = true) {
+        this.slider.children.forEach(child => {
+            child.children[1].element.classList.remove('active')
+        })
+
         const rightIndices = []
         for (let i = 0; i < Math.floor(this.slider.children.length * .5); i++) {
             rightIndices.push((activeIndex + i + 1) % this.numberOfPictures)
@@ -40,6 +56,7 @@ export class Slider {
         })
 
         const activeChild = this.slider.children[activeIndex]
+        activeChild.children[1].element.classList.add('active')
         this.setPosition(activeChild, 0, 0, 0, withAnimation)
         this.setQuaternion(activeChild, this.centerQuaternion, withAnimation)
     }

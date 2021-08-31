@@ -16,13 +16,8 @@ export class Slider {
             const mesh = new Mesh(pictureGeometry, pictureMaterial)
             const group = new Group()
             group.add(mesh)
-            const div = window.document.createElement('div')
-            div.classList.add('text')
-            div.innerHTML = `this is content`
-            const text = new CSS3DObject(div)
+            const text = this.createCSS3DObject('Mickey', '50X75CM', 'Jaw drop Acrylic, enamel & spray paint on canvas with pearlescent teeth and gold bling')
             mesh.position.x = -.5
-            text.position.x = .5
-            text.scale.set(0.01, 0.01, 1)
             group.add(text)
             this.slider.add(group)
         }
@@ -83,5 +78,31 @@ export class Slider {
         } else {
             mesh.quaternion.copy(quaternion)
         }
+    }
+
+    createCSS3DObject(line1, line2, line3) {
+        const element = window.document.createElement('div')
+        element.classList.add('text')
+        element.appendChild(this.createSpan(line1, 'headline'))
+        element.appendChild(this.createSpan(line2, 'size'))
+        element.appendChild(this.createSpan(line3, 'description'))
+        element.appendChild(this.createButton())
+        const css3dObject = new CSS3DObject(element)
+        css3dObject.position.x = .5
+        css3dObject.scale.set(0.007, 0.007, 1)
+        return css3dObject
+    }
+
+    createSpan(text, className) {
+        const span = window.document.createElement('span')
+        span.innerText = text
+        span.classList.add(className)
+        return span
+    }
+
+    createButton() {
+        const button = window.document.createElement('button')
+        button.innerText = 'Explore the shop'
+        return button
     }
 }

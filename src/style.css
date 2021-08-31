@@ -12,7 +12,35 @@
 .text{
     opacity: 0;
     transition: opacity .5s;
+    display: flex;
+    flex-direction: column;
+    color: white;
+    font-family: sans-serif;
+    font-size: .8em;
+    max-width: 10em;
 }
 .text.active{
     opacity: 1;
+}
+.text .headline{
+    text-transform: uppercase;
+}
+.text button{
+    background-color: #ff3b7e;
+    border: .1em solid #ff3b7e;
+    color: black;
+    transition: background-color .5s, color .5s;
+    text-transform: uppercase;
+    font-size: .7em;
+}
+.text button:hover{
+    background-color: black;
+    color: white;
+}
+
+.text .size, .text .description{
+    font-size: .7em;
+}
+.text .size, .text .description, .text button{
+    margin-top: .5em;
 }

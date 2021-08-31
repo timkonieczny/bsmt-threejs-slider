@@ -5,6 +5,8 @@ import { AmbientLight, Fog, PerspectiveCamera, Scene, WebGLRenderer } from "thre
 import { Slider } from "./slider"
 import { CSS3DRenderer } from "three/examples/jsm/renderers/CSS3DRenderer"
 
+const clearColor = 0x000000
+
 /**
  * Base
  */
@@ -29,6 +31,7 @@ const canvas = document.querySelector('canvas.webgl')
 
 // Scene
 const scene = new Scene()
+scene.fog = new Fog(clearColor, 15, 45)
 
 const light = new AmbientLight(0xffffff, 5.0)
 scene.add(light)
@@ -91,6 +94,7 @@ gui.add(camera.position, "x", -2, 2, 0.001).name("camera x")
 const renderer = new WebGLRenderer({
     canvas: canvas
 })
+renderer.setClearColor(clearColor)
 const cssRenderer = new CSS3DRenderer()
 
 renderer.setSize(sizes.width, sizes.height)

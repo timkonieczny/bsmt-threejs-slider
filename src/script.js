@@ -1,7 +1,7 @@
 import './style.css'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 import * as dat from 'dat.gui'
-import { AmbientLight, PerspectiveCamera, Scene, WebGLRenderer } from "three"
+import { AmbientLight, Fog, PerspectiveCamera, Scene, WebGLRenderer } from "three"
 import { Slider } from "./slider"
 import { CSS3DRenderer } from "three/examples/jsm/renderers/CSS3DRenderer"
 
@@ -14,7 +14,14 @@ const gui = new dat.GUI()
 const gltfLoader = new GLTFLoader()
 
 gltfLoader.load("/models/Tunnel.glb", gltf => {
-    scene.add(gltf.scene)
+    const tunnel = gltf.scene
+    const tunnel2 = tunnel.clone()
+    scene.add(tunnel)
+    scene.add(tunnel2)
+    tunnel.position.z = -10
+    tunnel2.position.z = -45
+    gui.add(tunnel.position, "z", -20, 20, 0.001).name("tunnel z")
+    gui.add(tunnel2.position, "z", -100, 0, 0.001).name("tunnel2 z")
 })
 
 // Canvas
@@ -26,9 +33,9 @@ const scene = new Scene()
 const light = new AmbientLight(0xffffff, 5.0)
 scene.add(light)
 
-const numberOfPictures = 11
 
 const slider = new Slider(scene)
+const numberOfPictures = slider.numberOfPictures
 
 const previousButton = document.querySelector(".previous")
 const nextButton = document.querySelector(".next")

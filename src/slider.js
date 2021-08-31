@@ -1,5 +1,5 @@
 import gsap from 'gsap'
-import { Color, Euler, Group, Mesh, MeshBasicMaterial, PlaneBufferGeometry, Quaternion, TextureLoader } from "three"
+import { Color, Euler, Group, Mesh, MeshBasicMaterial, PlaneBufferGeometry, Quaternion, sRGBEncoding, TextureLoader } from "three"
 import { CSS3DObject } from "three/examples/jsm/renderers/CSS3DRenderer"
 import image0 from '../assets/0.jpg'
 import image1 from '../assets/1.jpg'
@@ -36,6 +36,7 @@ export class Slider {
             const pictureMaterial = new MeshBasicMaterial()
             const mesh = new Mesh(pictureGeometry, pictureMaterial)
             textureLoader.load(images[i], texture => {
+                texture.encoding = sRGBEncoding
                 const { width, height } = texture.image
                 pictureMaterial.map = texture
                 if (width < height)

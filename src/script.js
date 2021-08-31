@@ -1,7 +1,7 @@
 import './style.css'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 import * as dat from 'dat.gui'
-import { AmbientLight, Fog, PerspectiveCamera, Scene, WebGLRenderer } from "three"
+import { ACESFilmicToneMapping, AmbientLight, Fog, PerspectiveCamera, Scene, sRGBEncoding, WebGLRenderer } from "three"
 import { Slider } from "./slider"
 import { CSS3DRenderer } from "three/examples/jsm/renderers/CSS3DRenderer"
 
@@ -95,6 +95,9 @@ const renderer = new WebGLRenderer({
     canvas: canvas
 })
 renderer.setClearColor(clearColor)
+renderer.physicallyCorrectLights = true
+renderer.outputEncoding = sRGBEncoding
+renderer.toneMapping = ACESFilmicToneMapping
 const cssRenderer = new CSS3DRenderer()
 
 renderer.setSize(sizes.width, sizes.height)

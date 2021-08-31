@@ -1,9 +1,10 @@
 import './style.css'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 import * as dat from 'dat.gui'
-import { ACESFilmicToneMapping, AmbientLight, Fog, PerspectiveCamera, Scene, sRGBEncoding, WebGLRenderer } from "three"
+import { ACESFilmicToneMapping, AmbientLight, Fog, Group, Mesh, MeshBasicMaterial, PerspectiveCamera, PlaneBufferGeometry, RectAreaLight, Scene, sRGBEncoding, Vector2, Vector3, WebGLRenderer } from "three"
 import { Slider } from "./slider"
 import { CSS3DRenderer } from "three/examples/jsm/renderers/CSS3DRenderer"
+import { RectAreaLightHelper } from "three/examples/jsm/helpers/RectAreaLightHelper"
 
 const clearColor = 0x000000
 
@@ -33,9 +34,32 @@ const canvas = document.querySelector('canvas.webgl')
 const scene = new Scene()
 scene.fog = new Fog(clearColor, 15, 45)
 
-const light = new AmbientLight(0xffffff, 5.0)
-scene.add(light)
+const ambientLight = new AmbientLight(0xffffff, 5.0)
+scene.add(ambientLight)
 
+const lightDimensions = new Vector2(.8, 2.1)
+const rectAreaLightGeometry = new PlaneBufferGeometry(lightDimensions.x, lightDimensions.y, 1, 1)
+const rectAreaLightMaterial = new MeshBasicMaterial({ color: 0xffffff })
+const createCeilingLight = () => {
+    const rectAreaLight = new RectAreaLight(0xffffff, 1, lightDimensions.x, lightDimensions.y)
+    const rectAreaLightGroup = new Group()
+    rectAreaLightGroup.add(rectAreaLight)
+    const rectAreaLightMesh = new Mesh(rectAreaLightGeometry, rectAreaLightMaterial)
+    rectAreaLightGroup.add(rectAreaLightMesh)
+    rectAreaLightGroup.rotation.x = Math.PI / 2
+    rectAreaLightGroup.position.set(0, 4.8, 0)
+    return rectAreaLightGroup
+}
+
+const ceilingLight1 = createCeilingLight()
+ceilingLight1.position.z = -6.3
+scene.add(ceilingLight1)
+const ceilingLight2 = createCeilingLight()
+ceilingLight2.position.z = -14.4
+scene.add(ceilingLight2)
+const ceilingLight3 = createCeilingLight()
+ceilingLight3.position.z = -26.8
+scene.add(ceilingLight3)
 
 const slider = new Slider(scene)
 const numberOfPictures = slider.numberOfPictures
@@ -87,6 +111,7 @@ const camera = new PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 100)
 camera.position.set(0, 0, 1)
 scene.add(camera)
 gui.add(camera.position, "x", -2, 2, 0.001).name("camera x")
+gui.add(camera.position, "z", -30, 10, 0.001).name("camera z")
 
 /**
  * Renderer

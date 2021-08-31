@@ -1,8 +1,8 @@
 import './style.css'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 import * as dat from 'dat.gui'
-import gsap from 'gsap'
-import { AmbientLight, Color, Euler, Group, Mesh, MeshBasicMaterial, PerspectiveCamera, PlaneBufferGeometry, Quaternion, Scene, WebGLRenderer } from "three"
+import { AmbientLight, PerspectiveCamera, Scene, WebGLRenderer } from "three"
+import { Slider } from "./slider"
 
 /**
  * Base
@@ -13,16 +13,11 @@ const gui = new dat.GUI()
 const gltfLoader = new GLTFLoader()
 
 gltfLoader.load("/models/Tunnel.glb", gltf => {
-    console.log(gltf)
     scene.add(gltf.scene)
 })
 
 // Canvas
 const canvas = document.querySelector('canvas.webgl')
-
-const leftQuaternion = new Quaternion().setFromEuler(new Euler(0, Math.PI * .5, 0))
-const rightQuaternion = new Quaternion().setFromEuler(new Euler(0, Math.PI * -.5, 0))
-const centerQuaternion = new Quaternion()
 
 // Scene
 const scene = new Scene()
@@ -30,65 +25,9 @@ const scene = new Scene()
 const light = new AmbientLight(0xffffff, 5.0)
 scene.add(light)
 
-const slider = new Group()
-const pictureGeometry = new PlaneBufferGeometry()
 const numberOfPictures = 11
-for (let i = 0; i < 11; i++) {
-    const pictureMaterial = new MeshBasicMaterial({ color: new Color(Math.random(), Math.random(), Math.random()) })
-    slider.add(new Mesh(pictureGeometry, pictureMaterial))
-}
-scene.add(slider)
 
-const rearrangePictures = (activeIndex, withAnimation = true) => {
-    const rightIndices = []
-    for (let i = 0; i < Math.floor(slider.children.length * .5); i++) {
-        rightIndices.push((activeIndex + i + 1) % numberOfPictures)
-    }
-    const leftIndices = []
-    for (let i = 0; i < Math.floor(slider.children.length * .5); i++) {
-        let index = activeIndex - i - 1
-        index = index < 0 ? index + numberOfPictures : index
-        leftIndices.push(index)
-    }
-    rightIndices.forEach((pictureIndex, i) => {
-        const child = slider.children[pictureIndex]
-        setPosition(child, 2, 0, -i - 1, withAnimation)
-        setQuaternion(child, rightQuaternion, withAnimation)
-    })
-    leftIndices.forEach((pictureIndex, i) => {
-        const child = slider.children[pictureIndex]
-        setPosition(child, -2, 0, -i - 1, withAnimation)
-        setQuaternion(child, leftQuaternion, withAnimation)
-    })
-
-    const activeChild = slider.children[activeIndex]
-    setPosition(activeChild, 0, 0, 0, withAnimation)
-    setQuaternion(activeChild, centerQuaternion, withAnimation)
-}
-
-const setPosition = (mesh, x, y, z, withAnimation = true) => {
-    if (withAnimation) {
-        gsap.to(mesh.position, { duration: 1, x, y, z })
-    } else {
-        mesh.position.set(x, y, z)
-    }
-}
-
-const setQuaternion = (mesh, quaternion, withAnimation = true) => {
-    if (withAnimation) {
-        const animationObject = { interpolator: 0 }
-        gsap.to(animationObject, {
-            duration: 1,
-            interpolator: 1,
-            onUpdateParams: [mesh.quaternion.clone()],
-            onUpdate(startQuaternion) {
-                mesh.quaternion.slerpQuaternions(startQuaternion, quaternion, animationObject.interpolator)
-            }
-        })
-    } else {
-        mesh.quaternion.copy(quaternion)
-    }
-}
+const slider = new Slider(scene)
 
 const previousButton = document.querySelector(".previous")
 const nextButton = document.querySelector(".next")
@@ -96,15 +35,15 @@ let activePicture = 0
 previousButton.addEventListener("click", _ => {
     activePicture -= 1
     activePicture = activePicture < 0 ? activePicture + numberOfPictures : activePicture
-    rearrangePictures(activePicture)
+    slider.rearrangePictures.call(slider, activePicture)
 })
 nextButton.addEventListener("click", _ => {
     activePicture += 1
     activePicture %= numberOfPictures
-    rearrangePictures(activePicture)
+    slider.rearrangePictures.call(slider, activePicture)
 })
 
-rearrangePictures(activePicture, false)
+slider.rearrangePictures.call(slider, activePicture, false)
 
 /**
  * Sizes

@@ -1,5 +1,5 @@
 import gsap from 'gsap'
-import { Color, Euler, Group, Mesh, MeshBasicMaterial, MeshStandardMaterial, Object3D, PlaneBufferGeometry, PointLight, Quaternion, RectAreaLight, SpotLight, SpotLightHelper, sRGBEncoding, TextureLoader, Vector3 } from "three"
+import { Color, Euler, Group, Mesh, MeshBasicMaterial, PlaneBufferGeometry, Quaternion, SpotLight, sRGBEncoding, TextureLoader } from "three"
 import { CSS3DObject } from "three/examples/jsm/renderers/CSS3DRenderer"
 import image0 from '../assets/0.jpg'
 import image1 from '../assets/1.jpg'
@@ -11,7 +11,6 @@ import image7 from '../assets/7.jpg'
 import image8 from '../assets/0.jpg'
 import image9 from '../assets/0.jpg'
 import * as Vibrant from 'node-vibrant'
-import { RectAreaLightHelper } from "three/examples/jsm/helpers/RectAreaLightHelper"
 
 const ARTWORK_OFFSET_X = 5
 const ARTWORK_OFFSET_Z = 4
@@ -43,12 +42,12 @@ export class Slider {
         this.numberOfPictures = images.length
         const slideDomElements = document.querySelector(".gallery-3d__slides").children
         for (let i = 0; i < this.numberOfPictures; i++) {
-            this.createSlide(pictureGeometry, textureLoader, images, i, slideDomElements)
+            this.createSlide(pictureGeometry, textureLoader, images, i, slideDomElements, scene)
         }
         scene.add(this.slider)
     }
 
-    createSlide(pictureGeometry, textureLoader, images, i, slideDomElements) {
+    createSlide(pictureGeometry, textureLoader, images, i, slideDomElements, scene) {
         const pictureMaterial = new MeshBasicMaterial()
         const mesh = new Mesh(pictureGeometry, pictureMaterial)
         const group = new Group()

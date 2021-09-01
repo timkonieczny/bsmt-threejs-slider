@@ -36,7 +36,7 @@ const scene = new Scene()
 scene.fog = new Fog(clearColor, 15, 45)
 
 const debug = {
-    ambientLightColor: 0xb12900,
+    ambientLightColor: 0xb93912,
     ceilingLightColor: 0x706d6d,
     ceilingLightIntensity: 5
 }

@@ -13,9 +13,15 @@ import image9 from '../assets/0.jpg'
 import * as Vibrant from 'node-vibrant'
 import { RectAreaLightHelper } from "three/examples/jsm/helpers/RectAreaLightHelper"
 
+const ARTWORK_OFFSET_X = 5
+const ARTWORK_OFFSET_Z = 4
+const ARTWORK_SCALE_INACTIVE = 4
+const ARTWORK_ACTIVE_POINT_LIGHT_TARGET_Z = -.5
+
 export class Slider {
 
     constructor(scene) {
+        this.activeIndex = null
         this.leftQuaternion = new Quaternion().setFromEuler(new Euler(0, Math.PI * .5, 0))
         this.rightQuaternion = new Quaternion().setFromEuler(new Euler(0, Math.PI * -.5, 0))
         this.centerQuaternion = new Quaternion()
@@ -49,7 +55,7 @@ export class Slider {
                 else
                     mesh.scale.set(1, texture.image.height / texture.image.width, 1)
 
-                this.createVibrantColorLight(texture.image.src, group, scene)
+                this.createVibrantColorLight(texture.image.src, group, scene, this.activeIndex === i)
             })
             group.add(mesh)
             const css3DObject = this.createCSS3DObject(slideDomElements[i])
@@ -61,6 +67,7 @@ export class Slider {
     }
 
     rearrangePictures(activeIndex, withAnimation = true) {
+        this.activeIndex = activeIndex
         this.slider.children.forEach(child => {
             child.children[1].element.classList.remove('active')
         })
@@ -77,22 +84,25 @@ export class Slider {
         }
         rightIndices.forEach((pictureIndex, i) => {
             const child = this.slider.children[pictureIndex]
-            this.setPosition(child, 2, 0, -i - 1, withAnimation)
-            this.setScale(child, 1, withAnimation)
+            this.setPosition(child, ARTWORK_OFFSET_X, -1, -i * ARTWORK_SCALE_INACTIVE - ARTWORK_OFFSET_Z, withAnimation)
+            this.setScale(child, 4, withAnimation)
             this.setQuaternion(child, this.rightQuaternion, withAnimation)
+            this.setPointLightTargetPositionZ(child, 0, withAnimation)
         })
         leftIndices.forEach((pictureIndex, i) => {
             const child = this.slider.children[pictureIndex]
-            this.setPosition(child, -2, 0, -i - 1, withAnimation)
-            this.setScale(child, 1, withAnimation)
+            this.setPosition(child, -ARTWORK_OFFSET_X, -1, -i * ARTWORK_SCALE_INACTIVE - ARTWORK_OFFSET_Z, withAnimation)
+            this.setScale(child, 4, withAnimation)
             this.setQuaternion(child, this.leftQuaternion, withAnimation)
+            this.setPointLightTargetPositionZ(child, 0, withAnimation)
         })
 
         const activeChild = this.slider.children[activeIndex]
         activeChild.children[1].element.classList.add('active')
-        this.setPosition(activeChild, 0, 0, -2, withAnimation)
-        this.setScale(activeChild, 2, withAnimation)
+        this.setPosition(activeChild, 0, 0, -4, withAnimation)
+        this.setScale(activeChild, 4, withAnimation)
         this.setQuaternion(activeChild, this.centerQuaternion, withAnimation)
+        this.setPointLightTargetPositionZ(activeChild, ARTWORK_ACTIVE_POINT_LIGHT_TARGET_Z, withAnimation)
     }
 
     setPosition(mesh, x, y, z, withAnimation = true) {
@@ -127,6 +137,18 @@ export class Slider {
         }
     }
 
+    setPointLightTargetPositionZ(child, z, withAnimation) {
+        const pointLight = child.children[3]
+        if (pointLight) {
+            const target = pointLight.target
+            if (withAnimation) {
+                gsap.to(target.position, { duration: 1, z })
+            } else {
+                target.position.z = z
+            }
+        }
+    }
+
     createCSS3DObject(element) {
         const css3dObject = new CSS3DObject(element)
         css3dObject.position.x = .5
@@ -147,40 +169,27 @@ export class Slider {
         return button
     }
 
-    // TODO: remove rect lights
-    // TODO: move artworks to wall
-    // TODO: move active artwork to center + increase scale
-    // TODO: try other colors
-    createVibrantColorLight(img, group, scene) {
+    createVibrantColorLight(img, group, scene, isActive) {
         Vibrant.from(img).getPalette(
             (err, palette) => {
+                // TODO: try other colors
                 const color = new Color(palette.Vibrant.hex)
-                // const rectAreaLight = new RectAreaLight(color, 30, group.children[0].scale.x, group.children[0].scale.y)
-                // rectAreaLight.position.copy(group.children[0].position)
-                // group.add(new RectAreaLightHelper(rectAreaLight))
-                // group.add(rectAreaLight)
+                const artwork = group.children[0]
                 const spotLight = new SpotLight(color, 10)
-                spotLight.angle = Math.PI * 0.1
-                // spotLight.lookAt(new Vector3(0, -1, 0))
-                // spotLight.rotation.z = Math.PI / 2
-                // spotLight.distance = .5
-                spotLight.position.copy(group.children[0].position)
-                // spotLight.position.y += 1
+                spotLight.angle = Math.PI * 0.2
+                spotLight.position.copy(artwork.position)
                 group.add(spotLight.target)
-                spotLight.target.position.copy(group.children[0].position)
+                spotLight.target.position.copy(artwork.position)
                 spotLight.target.position.y = -1
-                spotLight.target.position.z = -1
-                spotLight.decay = 0
-                // const targetObject3D = new Object3D()
-                // targetObject3D.position.copy(group.children[0].position)
-                // targetObject3D.position.y -= 1
-                // spotLight.target = group.children[0]
-                // console.log(spotLight.position)
-                const spotLightHelper = new SpotLightHelper(spotLight)
+                spotLight.decay = .3
+                // spotLight.penumbra = 1
                 group.add(spotLight)
-                // group.position.y -= 3
-                // scene.add(spotLightHelper)
+                if (isActive)
+                    spotLight.target.position.z = ARTWORK_ACTIVE_POINT_LIGHT_TARGET_Z
             }
         )
     }
 }
+// TODO: ceiling spot lights
+// TODO: (mousemove effect)
+// TODO: slide z offset when right or left

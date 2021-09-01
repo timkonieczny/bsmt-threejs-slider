@@ -1,5 +1,5 @@
 import gsap from 'gsap'
-import { Color, Euler, Group, Mesh, MeshBasicMaterial, MeshStandardMaterial, PlaneBufferGeometry, PointLight, Quaternion, RectAreaLight, SpotLight, sRGBEncoding, TextureLoader, Vector3 } from "three"
+import { Color, Euler, Group, Mesh, MeshBasicMaterial, MeshStandardMaterial, Object3D, PlaneBufferGeometry, PointLight, Quaternion, RectAreaLight, SpotLight, SpotLightHelper, sRGBEncoding, TextureLoader, Vector3 } from "three"
 import { CSS3DObject } from "three/examples/jsm/renderers/CSS3DRenderer"
 import image0 from '../assets/0.jpg'
 import image1 from '../assets/1.jpg'
@@ -20,6 +20,7 @@ export class Slider {
         this.rightQuaternion = new Quaternion().setFromEuler(new Euler(0, Math.PI * -.5, 0))
         this.centerQuaternion = new Quaternion()
         this.slider = new Group()
+        this.slider.position.z = 0
         const pictureGeometry = new PlaneBufferGeometry()
         const textureLoader = new TextureLoader()
         const images = [
@@ -48,7 +49,7 @@ export class Slider {
                 else
                     mesh.scale.set(1, texture.image.height / texture.image.width, 1)
 
-                this.createVibrantColorLight(texture.image.src, group)
+                this.createVibrantColorLight(texture.image.src, group, scene)
             })
             group.add(mesh)
             const css3DObject = this.createCSS3DObject(slideDomElements[i])
@@ -77,17 +78,20 @@ export class Slider {
         rightIndices.forEach((pictureIndex, i) => {
             const child = this.slider.children[pictureIndex]
             this.setPosition(child, 2, 0, -i - 1, withAnimation)
+            this.setScale(child, 1, withAnimation)
             this.setQuaternion(child, this.rightQuaternion, withAnimation)
         })
         leftIndices.forEach((pictureIndex, i) => {
             const child = this.slider.children[pictureIndex]
             this.setPosition(child, -2, 0, -i - 1, withAnimation)
+            this.setScale(child, 1, withAnimation)
             this.setQuaternion(child, this.leftQuaternion, withAnimation)
         })
 
         const activeChild = this.slider.children[activeIndex]
         activeChild.children[1].element.classList.add('active')
-        this.setPosition(activeChild, 0, 0, 0, withAnimation)
+        this.setPosition(activeChild, 0, 0, -2, withAnimation)
+        this.setScale(activeChild, 2, withAnimation)
         this.setQuaternion(activeChild, this.centerQuaternion, withAnimation)
     }
 
@@ -96,6 +100,14 @@ export class Slider {
             gsap.to(mesh.position, { duration: 1, x, y, z })
         } else {
             mesh.position.set(x, y, z)
+        }
+    }
+
+    setScale(mesh, scale, withAnimation = true) {
+        if (withAnimation) {
+            gsap.to(mesh.scale, { duration: 1, x: scale, y: scale, z: scale })
+        } else {
+            mesh.scale.set(scale, scale, scale)
         }
     }
 
@@ -135,14 +147,39 @@ export class Slider {
         return button
     }
 
-    createVibrantColorLight(img, group) {
+    // TODO: remove rect lights
+    // TODO: move artworks to wall
+    // TODO: move active artwork to center + increase scale
+    // TODO: try other colors
+    createVibrantColorLight(img, group, scene) {
         Vibrant.from(img).getPalette(
             (err, palette) => {
                 const color = new Color(palette.Vibrant.hex)
-                const rectAreaLight = new RectAreaLight(color, 30, group.children[0].scale.x, group.children[0].scale.y)
-                rectAreaLight.position.copy(group.children[0].position)
-                group.add(new RectAreaLightHelper(rectAreaLight))
-                group.add(rectAreaLight)
+                // const rectAreaLight = new RectAreaLight(color, 30, group.children[0].scale.x, group.children[0].scale.y)
+                // rectAreaLight.position.copy(group.children[0].position)
+                // group.add(new RectAreaLightHelper(rectAreaLight))
+                // group.add(rectAreaLight)
+                const spotLight = new SpotLight(color, 10)
+                spotLight.angle = Math.PI * 0.1
+                // spotLight.lookAt(new Vector3(0, -1, 0))
+                // spotLight.rotation.z = Math.PI / 2
+                // spotLight.distance = .5
+                spotLight.position.copy(group.children[0].position)
+                // spotLight.position.y += 1
+                group.add(spotLight.target)
+                spotLight.target.position.copy(group.children[0].position)
+                spotLight.target.position.y = -1
+                spotLight.target.position.z = -1
+                spotLight.decay = 0
+                // const targetObject3D = new Object3D()
+                // targetObject3D.position.copy(group.children[0].position)
+                // targetObject3D.position.y -= 1
+                // spotLight.target = group.children[0]
+                // console.log(spotLight.position)
+                const spotLightHelper = new SpotLightHelper(spotLight)
+                group.add(spotLight)
+                // group.position.y -= 3
+                // scene.add(spotLightHelper)
             }
         )
     }

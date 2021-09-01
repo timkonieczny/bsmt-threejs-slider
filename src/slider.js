@@ -43,30 +43,34 @@ export class Slider {
         this.numberOfPictures = images.length
         const slideDomElements = document.querySelector(".gallery-3d__slides").children
         for (let i = 0; i < this.numberOfPictures; i++) {
-            const pictureMaterial = new MeshBasicMaterial()
-            const mesh = new Mesh(pictureGeometry, pictureMaterial)
-            const group = new Group()
-            textureLoader.load(images[i], texture => {
-                texture.encoding = sRGBEncoding
-                const { width, height } = texture.image
-                pictureMaterial.map = texture
-                if (width < height)
-                    mesh.scale.set(texture.image.width / texture.image.height, 1, 1)
-                else
-                    mesh.scale.set(1, texture.image.height / texture.image.width, 1)
-
-                this.createVibrantColorLight(texture.image.src, group, scene, this.activeIndex === i)
-            })
-            group.add(mesh)
-            const css3DObject = this.createCSS3DObject(slideDomElements[i])
-            mesh.position.x = -.5
-            group.add(css3DObject)
-            const spotLight = new SpotLight()
-            group.add(spotLight)
-            group.add(spotLight.target)
-            this.slider.add(group)
+            this.createSlide(pictureGeometry, textureLoader, images, i, slideDomElements)
         }
         scene.add(this.slider)
+    }
+
+    createSlide(pictureGeometry, textureLoader, images, i, slideDomElements) {
+        const pictureMaterial = new MeshBasicMaterial()
+        const mesh = new Mesh(pictureGeometry, pictureMaterial)
+        const group = new Group()
+        textureLoader.load(images[i], texture => {
+            texture.encoding = sRGBEncoding
+            const { width, height } = texture.image
+            pictureMaterial.map = texture
+            if (width < height)
+                mesh.scale.set(texture.image.width / texture.image.height, 1, 1)
+            else
+                mesh.scale.set(1, texture.image.height / texture.image.width, 1)
+
+            this.createVibrantColorLight(texture.image.src, group, scene, this.activeIndex === i)
+        })
+        group.add(mesh)
+        const css3DObject = this.createCSS3DObject(slideDomElements[i])
+        mesh.position.x = -.5
+        group.add(css3DObject)
+        const spotLight = new SpotLight()
+        group.add(spotLight)
+        group.add(spotLight.target)
+        this.slider.add(group)
     }
 
     rearrangePictures(activeIndex, withAnimation = true) {

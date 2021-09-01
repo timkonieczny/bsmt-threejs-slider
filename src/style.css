@@ -17,7 +17,7 @@ canvas{
 .next{
     right: 0;
 }
-.text{
+.gallery-3d__slide{
     opacity: 0;
     transition: opacity .5s;
     display: flex;
@@ -27,13 +27,13 @@ canvas{
     font-size: .8em;
     max-width: 10em;
 }
-.text.active{
+.gallery-3d__slide.active{
     opacity: 1;
 }
-.text .headline{
+.gallery-3d__slide .gallery-3d__slide-title{
     text-transform: uppercase;
 }
-.text button{
+.gallery-3d__slide .gallery-3d__slide-btn{
     background-color: #ff3b7e;
     border: .1em solid #ff3b7e;
     color: black;
@@ -41,14 +41,14 @@ canvas{
     text-transform: uppercase;
     font-size: .7em;
 }
-.text button:hover{
+.gallery-3d__slide .gallery-3d__slide-btn:hover{
     background-color: black;
     color: white;
 }
 
-.text .size, .text .description{
+.gallery-3d__slide .gallery-3d__slide-subtitle, .gallery-3d__slide .gallery-3d__slide-content{
     font-size: .7em;
 }
-.text .size, .text .description, .text button{
-    margin-top: .5em;
+.gallery-3d__slide .gallery-3d__slide-subtitle, .gallery-3d__slide .gallery-3d__slide-content, .gallery-3d__slide .gallery-3d__slide-btn-wrapper{
+    margin: .5em 0 0 0;
 }

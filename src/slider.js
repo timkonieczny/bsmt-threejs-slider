@@ -32,6 +32,7 @@ export class Slider {
             image9,
         ]
         this.numberOfPictures = images.length
+        const slideDomElements = document.querySelector(".gallery-3d__slides").children
         for (let i = 0; i < this.numberOfPictures; i++) {
             const pictureMaterial = new MeshBasicMaterial()
             const mesh = new Mesh(pictureGeometry, pictureMaterial)
@@ -46,9 +47,9 @@ export class Slider {
             })
             const group = new Group()
             group.add(mesh)
-            const text = this.createCSS3DObject('Mickey', '50X75CM', 'Jaw drop Acrylic, enamel & spray paint on canvas with pearlescent teeth and gold bling')
+            const css3DObject = this.createCSS3DObject(slideDomElements[i])
             mesh.position.x = -.5
-            group.add(text)
+            group.add(css3DObject)
             this.slider.add(group)
         }
         scene.add(this.slider)
@@ -110,13 +111,7 @@ export class Slider {
         }
     }
 
-    createCSS3DObject(line1, line2, line3) {
-        const element = window.document.createElement('div')
-        element.classList.add('text')
-        element.appendChild(this.createSpan(line1, 'headline'))
-        element.appendChild(this.createSpan(line2, 'size'))
-        element.appendChild(this.createSpan(line3, 'description'))
-        element.appendChild(this.createButton())
+    createCSS3DObject(element) {
         const css3dObject = new CSS3DObject(element)
         css3dObject.position.x = .5
         css3dObject.scale.set(0.007, 0.007, 1)

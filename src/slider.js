@@ -61,6 +61,9 @@ export class Slider {
             const css3DObject = this.createCSS3DObject(slideDomElements[i])
             mesh.position.x = -.5
             group.add(css3DObject)
+            const spotLight = new SpotLight()
+            group.add(spotLight)
+            group.add(spotLight.target)
             this.slider.add(group)
         }
         scene.add(this.slider)
@@ -87,7 +90,7 @@ export class Slider {
             this.setPosition(child, ARTWORK_OFFSET_X, -1, -i * ARTWORK_SCALE_INACTIVE - ARTWORK_OFFSET_Z, withAnimation)
             this.setScale(child, 4, withAnimation)
             this.setQuaternion(child, this.rightQuaternion, withAnimation)
-            this.setPointLightTargetPositionZ(child, 0, withAnimation)
+            this.setSpotLightTargetPositionZ(child, 0, withAnimation)
             this.setArtworkCentered(child, true, withAnimation)
         })
         leftIndices.forEach((pictureIndex, i) => {
@@ -95,7 +98,7 @@ export class Slider {
             this.setPosition(child, -ARTWORK_OFFSET_X, -1, -i * ARTWORK_SCALE_INACTIVE - ARTWORK_OFFSET_Z, withAnimation)
             this.setScale(child, 4, withAnimation)
             this.setQuaternion(child, this.leftQuaternion, withAnimation)
-            this.setPointLightTargetPositionZ(child, 0, withAnimation)
+            this.setSpotLightTargetPositionZ(child, 0, withAnimation)
             this.setArtworkCentered(child, true, withAnimation)
         })
 
@@ -104,7 +107,7 @@ export class Slider {
         this.setPosition(activeChild, 0, 0, -4, withAnimation)
         this.setScale(activeChild, 4, withAnimation)
         this.setQuaternion(activeChild, this.centerQuaternion, withAnimation)
-        this.setPointLightTargetPositionZ(activeChild, ARTWORK_ACTIVE_POINT_LIGHT_TARGET_Z, withAnimation)
+        this.setSpotLightTargetPositionZ(activeChild, ARTWORK_ACTIVE_POINT_LIGHT_TARGET_Z, withAnimation)
         this.setArtworkCentered(activeChild, false, withAnimation)
     }
 
@@ -154,15 +157,14 @@ export class Slider {
         }
     }
 
-    setPointLightTargetPositionZ(child, z, withAnimation) {
-        const pointLight = child.children[3]
-        if (pointLight) {
-            const target = pointLight.target
-            if (withAnimation) {
-                gsap.to(target.position, { duration: 1, z })
-            } else {
-                target.position.z = z
-            }
+    setSpotLightTargetPositionZ(child, z, withAnimation) {
+        const spotLight = child.children[2]
+        console.log(spotLight)
+        const target = spotLight.target
+        if (withAnimation) {
+            gsap.to(target.position, { duration: 1, z })
+        } else {
+            target.position.z = z
         }
     }
 
@@ -191,15 +193,15 @@ export class Slider {
             (err, palette) => {
                 const color = new Color(palette.Vibrant.hex)
                 const artwork = group.children[0]
-                const spotLight = new SpotLight(color, 10)
+                const spotLight = group.children[2]
+                spotLight.color = color
+                spotLight.intensity = 10
                 spotLight.angle = Math.PI * 0.2
                 spotLight.position.copy(artwork.position)
-                group.add(spotLight.target)
                 spotLight.target.position.copy(artwork.position)
                 spotLight.target.position.y = -1
                 spotLight.decay = .3
                 spotLight.penumbra = 1
-                group.add(spotLight)
                 if (isActive)
                     spotLight.target.position.z = ARTWORK_ACTIVE_POINT_LIGHT_TARGET_Z
             }
@@ -207,4 +209,3 @@ export class Slider {
     }
 }
 // TODO: (mousemove effect)
-// TODO: slide z offset when right or left

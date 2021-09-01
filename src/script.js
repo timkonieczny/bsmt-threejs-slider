@@ -1,7 +1,7 @@
 import './style.css'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 import * as dat from 'dat.gui'
-import { ACESFilmicToneMapping, AmbientLight, Fog, Group, Mesh, MeshBasicMaterial, PerspectiveCamera, PlaneBufferGeometry, RectAreaLight, Scene, sRGBEncoding, Vector2, Vector3, WebGLRenderer } from "three"
+import { ACESFilmicToneMapping, AmbientLight, Color, Fog, Group, Mesh, MeshBasicMaterial, PerspectiveCamera, PlaneBufferGeometry, RectAreaLight, Scene, sRGBEncoding, Vector2, Vector3, WebGLRenderer } from "three"
 import { Slider } from "./slider"
 import { CSS3DRenderer } from "three/examples/jsm/renderers/CSS3DRenderer"
 import { RectAreaLightHelper } from "three/examples/jsm/helpers/RectAreaLightHelper"
@@ -18,6 +18,7 @@ const gltfLoader = new GLTFLoader()
 
 gltfLoader.load("/models/Tunnel.glb", gltf => {
     const tunnel = gltf.scene
+    // tunnel.children[0].children[4].visible = false
     const tunnel2 = tunnel.clone()
     scene.add(tunnel)
     scene.add(tunnel2)

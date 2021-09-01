@@ -5,6 +5,7 @@ import { ACESFilmicToneMapping, AmbientLight, Color, Fog, Group, Mesh, MeshBasic
 import { Slider } from "./slider"
 import { CSS3DRenderer } from "three/examples/jsm/renderers/CSS3DRenderer"
 import { RectAreaLightHelper } from "three/examples/jsm/helpers/RectAreaLightHelper"
+import gsap from 'gsap'
 
 const clearColor = 0x000000
 
@@ -18,7 +19,6 @@ const gltfLoader = new GLTFLoader()
 
 gltfLoader.load("/models/Tunnel.glb", gltf => {
     const tunnel = gltf.scene
-    // tunnel.children[0].children[4].visible = false
     const tunnel2 = tunnel.clone()
     scene.add(tunnel)
     scene.add(tunnel2)
@@ -135,6 +135,12 @@ window.addEventListener('resize', () => {
 const camera = new PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 100)
 camera.position.set(0, 0, 1)
 scene.add(camera)
+window.addEventListener('mousemove', event => {
+    const { clientX, clientY } = event
+    const x = ((clientX / sizes.width) * 2 - 1) * .1
+    const y = ((clientY / sizes.height) * -2 + 1) * .1
+    gsap.to(camera.position, { duration: .5, x, y })
+})
 gui.add(camera.position, "x", -2, 2, 0.001).name("camera x")
 gui.add(camera.position, "z", -30, 10, 0.001).name("camera z")
 

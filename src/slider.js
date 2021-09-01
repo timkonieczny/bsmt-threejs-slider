@@ -1,5 +1,5 @@
 import gsap from 'gsap'
-import { Color, Euler, Group, Mesh, MeshBasicMaterial, PlaneBufferGeometry, Quaternion, sRGBEncoding, TextureLoader } from "three"
+import { Color, Euler, Group, Mesh, MeshBasicMaterial, MeshStandardMaterial, PlaneBufferGeometry, PointLight, Quaternion, RectAreaLight, SpotLight, sRGBEncoding, TextureLoader, Vector3 } from "three"
 import { CSS3DObject } from "three/examples/jsm/renderers/CSS3DRenderer"
 import image0 from '../assets/0.jpg'
 import image1 from '../assets/1.jpg'
@@ -10,6 +10,8 @@ import image6 from '../assets/6.jpg'
 import image7 from '../assets/7.jpg'
 import image8 from '../assets/0.jpg'
 import image9 from '../assets/0.jpg'
+import * as Vibrant from 'node-vibrant'
+import { RectAreaLightHelper } from "three/examples/jsm/helpers/RectAreaLightHelper"
 
 export class Slider {
 
@@ -36,6 +38,7 @@ export class Slider {
         for (let i = 0; i < this.numberOfPictures; i++) {
             const pictureMaterial = new MeshBasicMaterial()
             const mesh = new Mesh(pictureGeometry, pictureMaterial)
+            const group = new Group()
             textureLoader.load(images[i], texture => {
                 texture.encoding = sRGBEncoding
                 const { width, height } = texture.image
@@ -44,8 +47,9 @@ export class Slider {
                     mesh.scale.set(texture.image.width / texture.image.height, 1, 1)
                 else
                     mesh.scale.set(1, texture.image.height / texture.image.width, 1)
+
+                this.createVibrantColorLight(texture.image.src, group)
             })
-            const group = new Group()
             group.add(mesh)
             const css3DObject = this.createCSS3DObject(slideDomElements[i])
             mesh.position.x = -.5
@@ -129,5 +133,17 @@ export class Slider {
         const button = window.document.createElement('button')
         button.innerText = 'Explore the shop'
         return button
+    }
+
+    createVibrantColorLight(img, group) {
+        Vibrant.from(img).getPalette(
+            (err, palette) => {
+                const color = new Color(palette.Vibrant.hex)
+                const rectAreaLight = new RectAreaLight(color, 30, group.children[0].scale.x, group.children[0].scale.y)
+                rectAreaLight.position.copy(group.children[0].position)
+                group.add(new RectAreaLightHelper(rectAreaLight))
+                group.add(rectAreaLight)
+            }
+        )
     }
 }

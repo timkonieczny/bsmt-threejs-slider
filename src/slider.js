@@ -172,7 +172,6 @@ export class Slider {
     createVibrantColorLight(img, group, scene, isActive) {
         Vibrant.from(img).getPalette(
             (err, palette) => {
-                // TODO: try other colors
                 const color = new Color(palette.Vibrant.hex)
                 const artwork = group.children[0]
                 const spotLight = new SpotLight(color, 10)
@@ -182,7 +181,7 @@ export class Slider {
                 spotLight.target.position.copy(artwork.position)
                 spotLight.target.position.y = -1
                 spotLight.decay = .3
-                // spotLight.penumbra = 1
+                spotLight.penumbra = 1
                 group.add(spotLight)
                 if (isActive)
                     spotLight.target.position.z = ARTWORK_ACTIVE_POINT_LIGHT_TARGET_Z
@@ -190,6 +189,5 @@ export class Slider {
         )
     }
 }
-// TODO: ceiling spot lights
 // TODO: (mousemove effect)
 // TODO: slide z offset when right or left

@@ -1,7 +1,7 @@
 import './style.css'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 import * as dat from 'dat.gui'
-import { ACESFilmicToneMapping, AmbientLight, Color, Fog, Group, Mesh, MeshBasicMaterial, PerspectiveCamera, PlaneBufferGeometry, RectAreaLight, Scene, sRGBEncoding, Vector2, Vector3, WebGLRenderer } from "three"
+import { ACESFilmicToneMapping, AmbientLight, Color, Fog, Group, Mesh, MeshBasicMaterial, PerspectiveCamera, PlaneBufferGeometry, PointLight, RectAreaLight, Scene, sRGBEncoding, Vector2, Vector3, WebGLRenderer } from "three"
 import { Slider } from "./slider"
 import { CSS3DRenderer } from "three/examples/jsm/renderers/CSS3DRenderer"
 import { RectAreaLightHelper } from "three/examples/jsm/helpers/RectAreaLightHelper"
@@ -38,7 +38,7 @@ scene.fog = new Fog(clearColor, 15, 45)
 const debug = {
     ambientLightColor: 0xb93912,
     ceilingLightColor: 0x706d6d,
-    ceilingLightIntensity: 5
+    ceilingLightIntensity: 1
 }
 
 const ambientLight = new AmbientLight(debug.ambientLightColor, 5.0)
@@ -49,21 +49,17 @@ gui.addColor(debug, 'ambientLightColor').onChange(() => {
 gui.add(ambientLight, 'intensity', 0, 10, 0.001)
 
 const lightDimensions = new Vector2(.8, 2.1)
-const rectAreaLightGeometry = new PlaneBufferGeometry(lightDimensions.x, lightDimensions.y, 1, 1)
-const rectAreaLightMaterial = new MeshBasicMaterial({ color: debug.ceilingLightColor })
+const ceilingLightGeometry = new PlaneBufferGeometry(lightDimensions.x, lightDimensions.y, 1, 1)
+const ceilingLightMaterial = new MeshBasicMaterial({ color: debug.ceilingLightColor })
 const createCeilingLight = () => {
-    const rectAreaLight = new RectAreaLight(debug.ceilingLightColor, debug.ceilingLightIntensity, lightDimensions.x, lightDimensions.y)
-    // const helper = new RectAreaLightHelper(rectAreaLight)
-    rectAreaLight.lookAt(0, 0, 1)
-    const rectAreaLightGroup = new Group()
-    rectAreaLightGroup.add(rectAreaLight)
-    const rectAreaLightMesh = new Mesh(rectAreaLightGeometry, rectAreaLightMaterial)
-    // rectAreaLightMesh.visible = false
-    rectAreaLightGroup.add(rectAreaLightMesh)
-    // rectAreaLightGroup.add(helper)
-    rectAreaLightGroup.rotation.x = Math.PI / 2
-    rectAreaLightGroup.position.set(0, 4.8, 0)
-    return rectAreaLightGroup
+    const ceilingLight = new PointLight(debug.ceilingLightColor, debug.ceilingLightIntensity)
+    const ceilingLightGroup = new Group()
+    ceilingLightGroup.add(ceilingLight)
+    const ceilingLightMesh = new Mesh(ceilingLightGeometry, ceilingLightMaterial)
+    ceilingLightGroup.add(ceilingLightMesh)
+    ceilingLightGroup.rotation.x = Math.PI / 2
+    ceilingLightGroup.position.set(0, 4.8, 0)
+    return ceilingLightGroup
 }
 
 const ceilingLight1 = createCeilingLight()

@@ -88,6 +88,7 @@ export class Slider {
             this.setScale(child, 4, withAnimation)
             this.setQuaternion(child, this.rightQuaternion, withAnimation)
             this.setPointLightTargetPositionZ(child, 0, withAnimation)
+            this.setArtworkCentered(child, true, withAnimation)
         })
         leftIndices.forEach((pictureIndex, i) => {
             const child = this.slider.children[pictureIndex]
@@ -95,6 +96,7 @@ export class Slider {
             this.setScale(child, 4, withAnimation)
             this.setQuaternion(child, this.leftQuaternion, withAnimation)
             this.setPointLightTargetPositionZ(child, 0, withAnimation)
+            this.setArtworkCentered(child, true, withAnimation)
         })
 
         const activeChild = this.slider.children[activeIndex]
@@ -103,6 +105,7 @@ export class Slider {
         this.setScale(activeChild, 4, withAnimation)
         this.setQuaternion(activeChild, this.centerQuaternion, withAnimation)
         this.setPointLightTargetPositionZ(activeChild, ARTWORK_ACTIVE_POINT_LIGHT_TARGET_Z, withAnimation)
+        this.setArtworkCentered(activeChild, false, withAnimation)
     }
 
     setPosition(mesh, x, y, z, withAnimation = true) {
@@ -134,6 +137,20 @@ export class Slider {
             })
         } else {
             mesh.quaternion.copy(quaternion)
+        }
+    }
+
+    setArtworkCentered(group, isCentered, withAnimation = true) {
+        const mesh = group.children[0]
+        const spotLight = group.children[3]
+        if (withAnimation) {
+            gsap.to(mesh.position, { duration: .5, x: isCentered ? 0 : -.5 })
+            if (spotLight)
+                gsap.to(spotLight.position, { duration: 1, x: isCentered ? 0 : -.5 })
+        } else {
+            mesh.position.x = isCentered ? 0 : -.5
+            if (spotLight)
+                spotLight.position.x = isCentered ? 0 : -.5
         }
     }
 

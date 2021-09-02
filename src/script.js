@@ -1,6 +1,5 @@
 import './style.css'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
-import * as dat from 'dat.gui'
 import { ACESFilmicToneMapping, AmbientLight, Fog, Group, Mesh, MeshBasicMaterial, PerspectiveCamera, PlaneBufferGeometry, PointLight, Scene, sRGBEncoding, Vector2, WebGLRenderer } from "three"
 import { Slider } from "./slider"
 import { CSS3DRenderer } from "three/examples/jsm/renderers/CSS3DRenderer"
@@ -11,8 +10,6 @@ const CLEAR_COLOR = 0x000000
 /**
  * Base
  */
-// Debug
-const gui = new dat.GUI()
 
 const gltfLoader = new GLTFLoader()
 
@@ -23,8 +20,6 @@ gltfLoader.load("/models/Tunnel.glb", gltf => {
     scene.add(tunnel2)
     tunnel.position.z = -10
     tunnel2.position.z = -45
-    gui.add(tunnel.position, "z", -20, 20, 0.001).name("tunnel z")
-    gui.add(tunnel2.position, "z", -100, 0, 0.001).name("tunnel2 z")
 })
 
 // Canvas
@@ -42,10 +37,6 @@ const debug = {
 
 const ambientLight = new AmbientLight(debug.ambientLightColor, 1.0)
 scene.add(ambientLight)
-gui.addColor(debug, 'ambientLightColor').onChange(() => {
-    ambientLight.color.set(debug.ambientLightColor)
-})
-gui.add(ambientLight, 'intensity', 0, 10, 0.001)
 
 const lightDimensions = new Vector2(.8, 2.1)
 const ceilingLightGeometry = new PlaneBufferGeometry(lightDimensions.x, lightDimensions.y, 1, 1)
@@ -70,20 +61,6 @@ scene.add(ceilingLight2)
 const ceilingLight3 = createCeilingLight()
 ceilingLight3.position.z = -26.8
 scene.add(ceilingLight3)
-
-gui.addColor(debug, 'ceilingLightColor').onChange(() => {
-    ceilingLight1.children[0].color.set(debug.ceilingLightColor)
-    ceilingLight2.children[0].color.set(debug.ceilingLightColor)
-    ceilingLight3.children[0].color.set(debug.ceilingLightColor)
-    ceilingLight1.children[1].material.color.set(debug.ceilingLightColor)
-    ceilingLight2.children[1].material.color.set(debug.ceilingLightColor)
-    ceilingLight3.children[1].material.color.set(debug.ceilingLightColor)
-})
-gui.add(debug, 'ceilingLightIntensity', 0, 10, 0.001).onChange(() => {
-    ceilingLight1.children[0].intensity = debug.ceilingLightIntensity
-    ceilingLight2.children[0].intensity = debug.ceilingLightIntensity
-    ceilingLight3.children[0].intensity = debug.ceilingLightIntensity
-})
 
 /**
  * Sizes
@@ -141,8 +118,6 @@ window.addEventListener('mousemove', event => {
     const y = ((clientY / sizes.height) * -2 + 1) * .1
     gsap.to(camera.position, { duration: .5, x, y })
 })
-gui.add(camera.position, "x", -2, 2, 0.001).name("camera x")
-gui.add(camera.position, "z", -30, 10, 0.001).name("camera z")
 
 /**
  * Renderer

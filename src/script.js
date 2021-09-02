@@ -102,6 +102,8 @@ window.addEventListener('resize', () => {
     renderer.setSize(sizes.width, sizes.height)
     css3dRenderer.setSize(sizes.width, sizes.height)
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+
+    // TODO: pass true here if mobile layout should be used
     slider.onResize(sizes.width < sizes.height)
 })
 
@@ -112,6 +114,7 @@ window.addEventListener('resize', () => {
 const camera = new PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 100)
 camera.position.set(0, 0, 1)
 scene.add(camera)
+// TODO: remove mousemove effect if it's not needed
 window.addEventListener('mousemove', event => {
     const { clientX, clientY } = event
     const x = ((clientX / sizes.width) * 2 - 1) * .1

@@ -1,6 +1,7 @@
 import gsap from 'gsap'
 import { Color, Euler, Group, Mesh, MeshBasicMaterial, PlaneBufferGeometry, Quaternion, SpotLight, sRGBEncoding, TextureLoader, Vector3 } from "three"
 import { CSS3DObject } from "three/examples/jsm/renderers/CSS3DRenderer"
+// TODO: use correct image URLs
 import image1 from '../assets/1.jpg'
 import image2 from '../assets/2.jpg'
 import image3 from '../assets/3.jpg'

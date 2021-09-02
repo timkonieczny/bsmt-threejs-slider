@@ -86,7 +86,15 @@ gui.add(debug, 'ceilingLightIntensity', 0, 10, 0.001).onChange(() => {
     ceilingLight3.children[0].intensity = debug.ceilingLightIntensity
 })
 
-const slider = new Slider(scene)
+/**
+ * Sizes
+ */
+const sizes = {
+    width: window.innerWidth,
+    height: window.innerHeight
+}
+
+const slider = new Slider(scene, sizes.width < sizes.height)
 const numberOfPictures = slider.numberOfPictures
 
 const previousButton = document.querySelector(".previous")
@@ -105,13 +113,7 @@ nextButton.addEventListener("click", _ => {
 
 slider.rearrangePictures.call(slider, activePicture, false)
 
-/**
- * Sizes
- */
-const sizes = {
-    width: window.innerWidth,
-    height: window.innerHeight
-}
+
 
 window.addEventListener('resize', () => {
     // Update sizes
@@ -126,6 +128,7 @@ window.addEventListener('resize', () => {
     renderer.setSize(sizes.width, sizes.height)
     cssRenderer.setSize(sizes.width, sizes.height)
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+    slider.onResize(sizes.width < sizes.height)
 })
 
 /**

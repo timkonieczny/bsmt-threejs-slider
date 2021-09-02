@@ -1,5 +1,5 @@
 import gsap from 'gsap'
-import { Color, Euler, Group, Mesh, MeshBasicMaterial, PlaneBufferGeometry, Quaternion, SpotLight, sRGBEncoding, TextureLoader } from "three"
+import { Color, Euler, Group, Mesh, MeshBasicMaterial, PlaneBufferGeometry, Quaternion, SpotLight, sRGBEncoding, TextureLoader, Vector3 } from "three"
 import { CSS3DObject } from "three/examples/jsm/renderers/CSS3DRenderer"
 import image1 from '../assets/1.jpg'
 import image2 from '../assets/2.jpg'
@@ -19,8 +19,9 @@ const ARTWORK_ACTIVE_POINT_LIGHT_TARGET_Z = -.5
 
 export class Slider {
 
-    constructor(scene) {
+    constructor(scene, isMobile) {
         this.activeIndex = null
+        this.isMobile = isMobile
         this.leftQuaternion = new Quaternion().setFromEuler(new Euler(0, Math.PI * .5, 0))
         this.rightQuaternion = new Quaternion().setFromEuler(new Euler(0, Math.PI * -.5, 0))
         this.centerQuaternion = new Quaternion()
@@ -50,7 +51,7 @@ export class Slider {
     createSlide(pictureGeometry, textureLoader, images, i, slideDomElements, scene) {
         const pictureMaterial = new MeshBasicMaterial()
         const mesh = new Mesh(pictureGeometry, pictureMaterial)
-        const group = new Group()
+        const slide = new Group()
         textureLoader.load(images[i], texture => {
             texture.encoding = sRGBEncoding
             const { width, height } = texture.image
@@ -60,16 +61,17 @@ export class Slider {
             else
                 mesh.scale.set(1, texture.image.height / texture.image.width, 1)
 
-            this.createVibrantColorLight(texture.image.src, group, scene, this.activeIndex === i)
+            this.createVibrantColorLight(texture.image.src, slide, scene, this.activeIndex === i)
         })
-        group.add(mesh)
+        slide.add(mesh)
         const css3DObject = this.createCSS3DObject(slideDomElements[i])
         mesh.position.x = -.5
-        group.add(css3DObject)
+        slide.add(css3DObject)
         const spotLight = new SpotLight()
-        group.add(spotLight)
-        group.add(spotLight.target)
-        this.slider.add(group)
+        slide.add(spotLight)
+        slide.add(spotLight.target)
+        this.positionCSS3DObject(slide)
+        this.slider.add(slide)
     }
 
     rearrangePictures(activeIndex, withAnimation = true) {
@@ -147,22 +149,27 @@ export class Slider {
     }
 
     setArtworkCentered(group, isCentered, withAnimation = true) {
+        const centeredPosition = new Vector3()
+        const offsetPositionDesktop = new Vector3(-.5, 0, 0)
+        const offsetPositionMobile = new Vector3(0, .5, 0)
+        const offsetPosition = this.isMobile ? offsetPositionMobile : offsetPositionDesktop
+        const targetPosition = isCentered ? centeredPosition : offsetPosition
         const mesh = group.children[0]
-        const spotLight = group.children[3]
+        const spotLight = group.children[2]
         if (withAnimation) {
-            gsap.to(mesh.position, { duration: .5, x: isCentered ? 0 : -.5 })
+            const { x, y, z } = targetPosition
+            gsap.to(mesh.position, { duration: .5, x, y, z })
             if (spotLight)
-                gsap.to(spotLight.position, { duration: 1, x: isCentered ? 0 : -.5 })
+                gsap.to(spotLight.position, { duration: 1, x, y, z })
         } else {
-            mesh.position.x = isCentered ? 0 : -.5
+            mesh.position.copy(targetPosition)
             if (spotLight)
-                spotLight.position.x = isCentered ? 0 : -.5
+                spotLight.position.copy(targetPosition)
         }
     }
 
     setSpotLightTargetPositionZ(child, z, withAnimation) {
         const spotLight = child.children[2]
-        console.log(spotLight)
         const target = spotLight.target
         if (withAnimation) {
             gsap.to(target.position, { duration: 1, z })
@@ -173,9 +180,15 @@ export class Slider {
 
     createCSS3DObject(element) {
         const css3dObject = new CSS3DObject(element)
-        css3dObject.position.x = .5
         css3dObject.scale.set(0.007, 0.007, 1)
         return css3dObject
+    }
+
+    positionCSS3DObject(slide) {
+        const offsetPositionDesktop = new Vector3(.5, 0, 0)
+        const offsetPositionMobile = new Vector3(0, -.5, 0)
+        const offsetPosition = this.isMobile ? offsetPositionMobile : offsetPositionDesktop
+        slide.children[1].position.copy(offsetPosition)
     }
 
     createSpan(text, className) {
@@ -210,5 +223,13 @@ export class Slider {
             }
         )
     }
+
+    onResize(isMobile) {
+        this.isMobile = isMobile
+        this.slider.children.forEach(slide => {
+            const isActiveSlide = this.slider.children[this.activeIndex] === slide
+            this.positionCSS3DObject(slide)
+            this.setArtworkCentered(slide, !isActiveSlide, false)
+        })
+    }
 }
-// TODO: (mousemove effect)

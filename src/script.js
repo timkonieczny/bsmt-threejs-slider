@@ -148,7 +148,8 @@ gui.add(camera.position, "z", -30, 10, 0.001).name("camera z")
  * Renderer
  */
 const renderer = new WebGLRenderer({
-    canvas: canvas
+    canvas: canvas,
+    antialias: window.devicePixelRatio >= 2 ? false : true
 })
 renderer.setClearColor(clearColor)
 renderer.physicallyCorrectLights = true

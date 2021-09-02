@@ -36,12 +36,12 @@ const scene = new Scene()
 scene.fog = new Fog(clearColor, 15, 45)
 
 const debug = {
-    ambientLightColor: 0xb93912,
+    ambientLightColor: 0xff7b2f,
     ceilingLightColor: 0x706d6d,
     ceilingLightIntensity: 1
 }
 
-const ambientLight = new AmbientLight(debug.ambientLightColor, 5.0)
+const ambientLight = new AmbientLight(debug.ambientLightColor, 1.0)
 scene.add(ambientLight)
 gui.addColor(debug, 'ambientLightColor').onChange(() => {
     ambientLight.color.set(debug.ambientLightColor)
@@ -50,7 +50,7 @@ gui.add(ambientLight, 'intensity', 0, 10, 0.001)
 
 const lightDimensions = new Vector2(.8, 2.1)
 const ceilingLightGeometry = new PlaneBufferGeometry(lightDimensions.x, lightDimensions.y, 1, 1)
-const ceilingLightMaterial = new MeshBasicMaterial({ color: debug.ceilingLightColor })
+const ceilingLightMaterial = new MeshBasicMaterial({ color: 0x464141 })
 const createCeilingLight = () => {
     const ceilingLight = new PointLight(debug.ceilingLightColor, debug.ceilingLightIntensity)
     const ceilingLightGroup = new Group()

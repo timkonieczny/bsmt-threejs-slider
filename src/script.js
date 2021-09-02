@@ -1,13 +1,12 @@
 import './style.css'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 import * as dat from 'dat.gui'
-import { ACESFilmicToneMapping, AmbientLight, Color, Fog, Group, Mesh, MeshBasicMaterial, PerspectiveCamera, PlaneBufferGeometry, PointLight, RectAreaLight, Scene, sRGBEncoding, Vector2, Vector3, WebGLRenderer } from "three"
+import { ACESFilmicToneMapping, AmbientLight, Fog, Group, Mesh, MeshBasicMaterial, PerspectiveCamera, PlaneBufferGeometry, PointLight, Scene, sRGBEncoding, Vector2, WebGLRenderer } from "three"
 import { Slider } from "./slider"
 import { CSS3DRenderer } from "three/examples/jsm/renderers/CSS3DRenderer"
-import { RectAreaLightHelper } from "three/examples/jsm/helpers/RectAreaLightHelper"
 import gsap from 'gsap'
 
-const clearColor = 0x000000
+const CLEAR_COLOR = 0x000000
 
 /**
  * Base
@@ -33,7 +32,7 @@ const canvas = document.querySelector('canvas.webgl')
 
 // Scene
 const scene = new Scene()
-scene.fog = new Fog(clearColor, 15, 45)
+scene.fog = new Fog(CLEAR_COLOR, 15, 45)
 
 const debug = {
     ambientLightColor: 0xff7b2f,
@@ -103,17 +102,15 @@ let activePicture = 0
 previousButton.addEventListener("click", _ => {
     activePicture -= 1
     activePicture = activePicture < 0 ? activePicture + numberOfPictures : activePicture
-    slider.rearrangePictures.call(slider, activePicture)
+    slider.setActiveSlide.call(slider, activePicture)
 })
 nextButton.addEventListener("click", _ => {
     activePicture += 1
     activePicture %= numberOfPictures
-    slider.rearrangePictures.call(slider, activePicture)
+    slider.setActiveSlide.call(slider, activePicture)
 })
 
-slider.rearrangePictures.call(slider, activePicture, false)
-
-
+slider.setActiveSlide.call(slider, activePicture, false)
 
 window.addEventListener('resize', () => {
     // Update sizes
@@ -126,7 +123,7 @@ window.addEventListener('resize', () => {
 
     // Update renderer
     renderer.setSize(sizes.width, sizes.height)
-    cssRenderer.setSize(sizes.width, sizes.height)
+    css3dRenderer.setSize(sizes.width, sizes.height)
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
     slider.onResize(sizes.width < sizes.height)
 })
@@ -154,20 +151,20 @@ const renderer = new WebGLRenderer({
     canvas: canvas,
     antialias: window.devicePixelRatio >= 2 ? false : true
 })
-renderer.setClearColor(clearColor)
+renderer.setClearColor(CLEAR_COLOR)
 renderer.physicallyCorrectLights = true
 renderer.outputEncoding = sRGBEncoding
 renderer.toneMapping = ACESFilmicToneMapping
-const cssRenderer = new CSS3DRenderer()
-
 renderer.setSize(sizes.width, sizes.height)
-cssRenderer.setSize(sizes.width, sizes.height)
-cssRenderer.domElement.style.position = 'absolute'
-cssRenderer.domElement.style.top = '0px'
-cssRenderer.domElement.style.left = '0px'
-cssRenderer.domElement.style.pointerEvents = 'none'
-document.body.appendChild(cssRenderer.domElement)
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+
+const css3dRenderer = new CSS3DRenderer()
+css3dRenderer.setSize(sizes.width, sizes.height)
+css3dRenderer.domElement.style.position = 'absolute'
+css3dRenderer.domElement.style.top = '0px'
+css3dRenderer.domElement.style.left = '0px'
+css3dRenderer.domElement.style.pointerEvents = 'none'
+document.body.appendChild(css3dRenderer.domElement)
 
 
 /**
@@ -176,7 +173,7 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 const tick = () => {
     // Render
     renderer.render(scene, camera)
-    cssRenderer.render(scene, camera)
+    css3dRenderer.render(scene, camera)
 
     // Call tick again on the next frame
     window.requestAnimationFrame(tick)

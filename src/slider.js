@@ -49,10 +49,10 @@ export class Slider {
             image3,
             image4,
             image5,
-            image6,
-            image7,
-            image8,
-            image9,
+            // image6,
+            // image7,
+            // image8,
+            // image9,
         ]
         this.numberOfPictures = imageUrls.length
         // The DOM elements are grabbed here and paired with the artwork slides.

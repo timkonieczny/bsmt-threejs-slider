@@ -89,15 +89,26 @@ export class Slider {
         slide.add(css3DObject)
         const spotLight = new SpotLight()
         spotLight.intensity = SLIDE_LIGHT_INTENSITY_DEFAULT
-        artworkMesh.add(spotLight)
-        artworkMesh.add(spotLight.target)
+        spotLight.angle = Math.PI * 0.2
+        const artwork = this.getMesh(slide)
+
+        spotLight.position.copy(artwork.position)
+        spotLight.target.position.copy(artwork.position)
+        spotLight.target.position.y = -1
+        spotLight.decay = .3
+        spotLight.penumbra = 1
+
+        slide.add(spotLight)
+        slide.add(spotLight.target)
         const ctaSpotLight = new SpotLight()
-        ctaSpotLight.intensity = 100
+        ctaSpotLight.intensity = SLIDE_CTA_LIGHT_INTENSITY_HIGHLIGHT
         ctaSpotLight.color.set(0xff3b7e)
         ctaSpotLight.position.x = .5
+        ctaSpotLight.position.y = 0
         ctaSpotLight.target.position.z = SLIDE_LIGHT_TARGET_Z
         ctaSpotLight.target.position.x = ctaSpotLight.position.x
-        ctaSpotLight.angle = Math.PI * 0.1
+        ctaSpotLight.target.position.y = -1
+        ctaSpotLight.angle = Math.PI * 0.2
         ctaSpotLight.decay = .3
         ctaSpotLight.penumbra = 1
         slide.add(ctaSpotLight)
@@ -243,12 +254,6 @@ export class Slider {
                 const artwork = this.getMesh(slide)
                 const spotLight = this.getSpotLight(slide)
                 spotLight.color = color
-                spotLight.angle = Math.PI * 0.2
-                spotLight.position.copy(artwork.position)
-                spotLight.target.position.copy(artwork.position)
-                spotLight.target.position.y = -1
-                spotLight.decay = .3
-                spotLight.penumbra = 1
                 if (isActive)
                     spotLight.target.position.z = SLIDE_LIGHT_TARGET_Z
             }
@@ -277,11 +282,11 @@ export class Slider {
 
     // Returns a slide's spot light
     getSpotLight(slide) {
-        return this.getMesh(slide).children[0]
+        return slide.children[2]
     }
     // Returns a slide's  CTA spot light
     getCTASpotLight(slide) {
-        return slide.children[2]
+        return slide.children[4]
     }
 
     // Returns a slide's artwork mesh

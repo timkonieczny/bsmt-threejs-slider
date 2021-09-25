@@ -204,6 +204,7 @@ export class Slider {
         Vibrant.from(imageUrl).getPalette(
             (_err, palette) => {
                 const color = new Color(palette.Vibrant.hex)
+                color.offsetHSL(0, 1, 0)
                 const artwork = this.getMesh(slide)
                 const spotLight = this.getSpotLight(slide)
                 spotLight.color = color

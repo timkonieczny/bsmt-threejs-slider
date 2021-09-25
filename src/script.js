@@ -43,7 +43,7 @@ sceneGroup.add(ambientLight)
 
 const lightDimensions = new Vector2(.8, 2.1)
 const ceilingLightGeometry = new PlaneBufferGeometry(lightDimensions.x, lightDimensions.y, 1, 1)
-const ceilingLightMaterial = new MeshBasicMaterial({ color: 0x464141 })
+const ceilingLightMaterial = new MeshBasicMaterial({ color: 0xc2d2f0 })
 const createCeilingLight = () => {
     const ceilingLight = new PointLight(debug.ceilingLightColor, debug.ceilingLightIntensity)
     const ceilingLightGroup = new Group()

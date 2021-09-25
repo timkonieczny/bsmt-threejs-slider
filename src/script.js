@@ -16,10 +16,9 @@ const gltfLoader = new GLTFLoader()
 gltfLoader.load("/models/Tunnel.glb", gltf => {
     const tunnel = gltf.scene
     const tunnel2 = tunnel.clone()
-    scene.add(tunnel)
-    scene.add(tunnel2)
     tunnel.position.z = -10
     tunnel2.position.z = -45
+    sceneGroup.add(tunnel, tunnel2)
 })
 
 // Canvas
@@ -27,7 +26,11 @@ const canvas = document.querySelector('canvas.webgl')
 
 // Scene
 const scene = new Scene()
-scene.fog = new Fog(CLEAR_COLOR, 15, 45)
+scene.fog = new Fog(CLEAR_COLOR, 30, 45)
+
+const sceneGroup = new Group()
+sceneGroup.scale.multiplyScalar(2)
+scene.add(sceneGroup)
 
 const debug = {
     ambientLightColor: 0xff7b2f,
@@ -36,7 +39,7 @@ const debug = {
 }
 
 const ambientLight = new AmbientLight(debug.ambientLightColor, 1.0)
-scene.add(ambientLight)
+sceneGroup.add(ambientLight)
 
 const lightDimensions = new Vector2(.8, 2.1)
 const ceilingLightGeometry = new PlaneBufferGeometry(lightDimensions.x, lightDimensions.y, 1, 1)
@@ -54,13 +57,13 @@ const createCeilingLight = () => {
 
 const ceilingLight1 = createCeilingLight()
 ceilingLight1.position.z = -6.3
-scene.add(ceilingLight1)
+sceneGroup.add(ceilingLight1)
 const ceilingLight2 = createCeilingLight()
 ceilingLight2.position.z = -14.4
-scene.add(ceilingLight2)
+sceneGroup.add(ceilingLight2)
 const ceilingLight3 = createCeilingLight()
 ceilingLight3.position.z = -26.8
-scene.add(ceilingLight3)
+sceneGroup.add(ceilingLight3)
 
 /**
  * Sizes
@@ -70,7 +73,7 @@ const sizes = {
     height: window.innerHeight
 }
 
-const slider = new Slider(scene, sizes.width < sizes.height)
+const slider = new Slider(sceneGroup, sizes.width < sizes.height)
 const numberOfPictures = slider.numberOfPictures
 
 const previousButton = document.querySelector(".previous")
@@ -112,7 +115,7 @@ window.addEventListener('resize', () => {
  */
 // Base camera
 const camera = new PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 100)
-camera.position.set(0, 0, 1)
+camera.position.set(0, 0, 2)
 scene.add(camera)
 // TODO: remove mousemove effect if it's not needed
 window.addEventListener('mousemove', event => {

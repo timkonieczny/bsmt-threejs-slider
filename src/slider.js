@@ -18,6 +18,7 @@ const SLIDE_SCALE = 4
 const SLIDE_LIGHT_TARGET_Z = -.1
 const SLIDE_LIGHT_INTENSITY_DEFAULT = 10
 const SLIDE_LIGHT_INTENSITY_HIGHLIGHT = 100
+const SLIDE_CTA_LIGHT_INTENSITY_HIGHLIGHT = 100
 const ACTIVE_SLIDE_MESH_POSITION = {
     desktop: new Vector3(-.5, 0, 0),
     mobile: new Vector3(0, .25, 0)
@@ -90,6 +91,17 @@ export class Slider {
         spotLight.intensity = SLIDE_LIGHT_INTENSITY_DEFAULT
         artworkMesh.add(spotLight)
         artworkMesh.add(spotLight.target)
+        const ctaSpotLight = new SpotLight()
+        ctaSpotLight.intensity = 100
+        ctaSpotLight.color.set(0xff3b7e)
+        ctaSpotLight.position.x = .5
+        ctaSpotLight.target.position.z = SLIDE_LIGHT_TARGET_Z
+        ctaSpotLight.target.position.x = ctaSpotLight.position.x
+        ctaSpotLight.angle = Math.PI * 0.1
+        ctaSpotLight.decay = .3
+        ctaSpotLight.penumbra = 1
+        slide.add(ctaSpotLight)
+        slide.add(ctaSpotLight.target)
         slide.scale.setScalar(SLIDE_SCALE)
         this.positionCSS3DObject(slide)
     }
@@ -122,6 +134,7 @@ export class Slider {
             this.setQuaternion(child, this.rightWallQuaternion, withAnimation)
             this.setSpotLightTargetPositionZ(child, 0, withAnimation)
             this.setSpotLightBrightness(child, SLIDE_LIGHT_INTENSITY_DEFAULT, withAnimation)
+            this.setCTASpotLightBrightness(child, 0, withAnimation)
             this.setArtworkCentered(child, true, withAnimation)
         })
         // Update all slides that will move to the left wall
@@ -131,6 +144,7 @@ export class Slider {
             this.setQuaternion(child, this.leftWallQuaternion, withAnimation)
             this.setSpotLightTargetPositionZ(child, 0, withAnimation)
             this.setSpotLightBrightness(child, SLIDE_LIGHT_INTENSITY_DEFAULT, withAnimation)
+            this.setCTASpotLightBrightness(child, 0, withAnimation)
             this.setArtworkCentered(child, true, withAnimation)
         })
 
@@ -141,6 +155,7 @@ export class Slider {
         this.setQuaternion(activeSlide, this.activeSlideQuaternion, withAnimation)
         this.setSpotLightTargetPositionZ(activeSlide, SLIDE_LIGHT_TARGET_Z, withAnimation)
         this.setSpotLightBrightness(activeSlide, SLIDE_LIGHT_INTENSITY_HIGHLIGHT, withAnimation)
+        this.setCTASpotLightBrightness(activeSlide, SLIDE_CTA_LIGHT_INTENSITY_HIGHLIGHT, withAnimation)
         this.setArtworkCentered(activeSlide, false, withAnimation)
     }
 
@@ -197,6 +212,13 @@ export class Slider {
         const spotLight = this.getSpotLight(slide)
         if (withAnimation) gsap.to(spotLight, { duration: 1, intensity })
         else spotLight.intensity = intensity
+    }
+
+    // Sets the intensity of a CTA spot light of a given slide
+    setCTASpotLightBrightness(slide, intensity, withAnimation) {
+        const ctaSpotLight = this.getCTASpotLight(slide)
+        if (withAnimation) gsap.to(ctaSpotLight, { duration: 1, intensity })
+        else ctaSpotLight.intensity = intensity
     }
 
     // Takes a DOM element and creates a CSS3DObject from it that will be transformed by Threejs
@@ -256,6 +278,10 @@ export class Slider {
     // Returns a slide's spot light
     getSpotLight(slide) {
         return this.getMesh(slide).children[0]
+    }
+    // Returns a slide's  CTA spot light
+    getCTASpotLight(slide) {
+        return slide.children[2]
     }
 
     // Returns a slide's artwork mesh

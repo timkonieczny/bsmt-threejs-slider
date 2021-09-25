@@ -15,7 +15,9 @@ import * as Vibrant from 'node-vibrant'
 
 const INACTIVE_SLIDE_POSITION = new Vector3(5, -1, 4)
 const SLIDE_SCALE = 4
-const SLIDE_LIGHT_TARGET_Z = -.5
+const SLIDE_LIGHT_TARGET_Z = -.1
+const SLIDE_LIGHT_INTENSITY_DEFAULT = 10
+const SLIDE_LIGHT_INTENSITY_HIGHLIGHT = 100
 const ACTIVE_SLIDE_MESH_POSITION = {
     desktop: new Vector3(-.5, 0, 0),
     mobile: new Vector3(0, .25, 0)
@@ -85,8 +87,9 @@ export class Slider {
         artworkMesh.position.x = -.5
         slide.add(css3DObject)
         const spotLight = new SpotLight()
-        slide.add(spotLight)
-        slide.add(spotLight.target)
+        spotLight.intensity = SLIDE_LIGHT_INTENSITY_DEFAULT
+        artworkMesh.add(spotLight)
+        artworkMesh.add(spotLight.target)
         slide.scale.setScalar(SLIDE_SCALE)
         this.positionCSS3DObject(slide)
     }
@@ -118,6 +121,7 @@ export class Slider {
             this.setPosition(child, INACTIVE_SLIDE_POSITION.x, INACTIVE_SLIDE_POSITION.y, -i * SLIDE_SCALE - INACTIVE_SLIDE_POSITION.z, withAnimation)
             this.setQuaternion(child, this.rightWallQuaternion, withAnimation)
             this.setSpotLightTargetPositionZ(child, 0, withAnimation)
+            this.setSpotLightBrightness(child, SLIDE_LIGHT_INTENSITY_DEFAULT, withAnimation)
             this.setArtworkCentered(child, true, withAnimation)
         })
         // Update all slides that will move to the left wall
@@ -126,6 +130,7 @@ export class Slider {
             this.setPosition(child, -INACTIVE_SLIDE_POSITION.x, INACTIVE_SLIDE_POSITION.y, -i * SLIDE_SCALE - INACTIVE_SLIDE_POSITION.z, withAnimation)
             this.setQuaternion(child, this.leftWallQuaternion, withAnimation)
             this.setSpotLightTargetPositionZ(child, 0, withAnimation)
+            this.setSpotLightBrightness(child, SLIDE_LIGHT_INTENSITY_DEFAULT, withAnimation)
             this.setArtworkCentered(child, true, withAnimation)
         })
 
@@ -135,6 +140,7 @@ export class Slider {
         this.setPosition(activeSlide, 0, 0, -4, withAnimation)
         this.setQuaternion(activeSlide, this.activeSlideQuaternion, withAnimation)
         this.setSpotLightTargetPositionZ(activeSlide, SLIDE_LIGHT_TARGET_Z, withAnimation)
+        this.setSpotLightBrightness(activeSlide, SLIDE_LIGHT_INTENSITY_HIGHLIGHT, withAnimation)
         this.setArtworkCentered(activeSlide, false, withAnimation)
     }
 
@@ -186,6 +192,13 @@ export class Slider {
         else target.position.z = z
     }
 
+    // Sets the intensity of a spot light of a given slide
+    setSpotLightBrightness(slide, intensity, withAnimation) {
+        const spotLight = this.getSpotLight(slide)
+        if (withAnimation) gsap.to(spotLight, { duration: 1, intensity })
+        else spotLight.intensity = intensity
+    }
+
     // Takes a DOM element and creates a CSS3DObject from it that will be transformed by Threejs
     createCSS3DObject(domElement) {
         const css3dObject = new CSS3DObject(domElement)
@@ -208,7 +221,6 @@ export class Slider {
                 const artwork = this.getMesh(slide)
                 const spotLight = this.getSpotLight(slide)
                 spotLight.color = color
-                spotLight.intensity = 10
                 spotLight.angle = Math.PI * 0.2
                 spotLight.position.copy(artwork.position)
                 spotLight.target.position.copy(artwork.position)
@@ -243,7 +255,7 @@ export class Slider {
 
     // Returns a slide's spot light
     getSpotLight(slide) {
-        return slide.children[2]
+        return this.getMesh(slide).children[0]
     }
 
     // Returns a slide's artwork mesh

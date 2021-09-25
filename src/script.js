@@ -26,7 +26,7 @@ const canvas = document.querySelector('canvas.webgl')
 
 // Scene
 const scene = new Scene()
-scene.fog = new Fog(CLEAR_COLOR, 30, 45)
+scene.fog = new Fog(CLEAR_COLOR, 40, 60)
 
 const sceneGroup = new Group()
 sceneGroup.scale.multiplyScalar(2)
@@ -35,10 +35,10 @@ scene.add(sceneGroup)
 const debug = {
     ambientLightColor: 0xff7b2f,
     ceilingLightColor: 0x706d6d,
-    ceilingLightIntensity: 1
+    ceilingLightIntensity: 5
 }
 
-const ambientLight = new AmbientLight(debug.ambientLightColor, 1.0)
+const ambientLight = new AmbientLight(debug.ambientLightColor, 2.0)
 sceneGroup.add(ambientLight)
 
 const lightDimensions = new Vector2(.8, 2.1)

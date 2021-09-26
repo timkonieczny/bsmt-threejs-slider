@@ -85,7 +85,6 @@ export class Slider {
         })
         slide.add(artworkMesh)
         const css3DObject = this.createCSS3DObject(domElement)
-        console.log(domElement.children)
         // artworkMesh.position.x = -.5
         slide.add(css3DObject)
         const spotLight = new SpotLight()
@@ -115,7 +114,7 @@ export class Slider {
         slide.add(ctaSpotLight)
         slide.add(ctaSpotLight.target)
         slide.scale.setScalar(SLIDE_SCALE)
-        this.positionCSS3DObject(slide)
+        // this.positionCSS3DObject(slide)
     }
 
     // Sets the active slide and updates all other slides.
@@ -266,7 +265,7 @@ export class Slider {
         this.isMobile = isMobile
         this.slider.children.forEach(slide => {
             const isActiveSlide = this.isActiveSlide(slide)
-            this.positionCSS3DObject(slide)
+            // this.positionCSS3DObject(slide)
             this.setArtworkCentered(slide, !isActiveSlide, false)
         })
     }

@@ -73,7 +73,7 @@ const sizes = {
     height: window.innerHeight
 }
 
-const slider = new Slider(sceneGroup, sizes.width < sizes.height)
+const slider = new Slider(sceneGroup, true)
 const numberOfPictures = slider.numberOfPictures
 
 const previousButton = document.querySelector(".previous")
@@ -107,7 +107,7 @@ window.addEventListener('resize', () => {
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 
     // TODO: pass true here if mobile layout should be used
-    slider.onResize(sizes.width < sizes.height)
+    // slider.onResize(sizes.width < sizes.height)
 })
 
 /**

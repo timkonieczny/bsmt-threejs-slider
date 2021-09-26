@@ -85,7 +85,8 @@ export class Slider {
         })
         slide.add(artworkMesh)
         const css3DObject = this.createCSS3DObject(domElement)
-        artworkMesh.position.x = -.5
+        console.log(domElement.children)
+        // artworkMesh.position.x = -.5
         slide.add(css3DObject)
         const spotLight = new SpotLight()
         spotLight.intensity = SLIDE_LIGHT_INTENSITY_DEFAULT
@@ -146,7 +147,7 @@ export class Slider {
             this.setSpotLightTargetPositionZ(child, 0, withAnimation)
             this.setSpotLightBrightness(child, SLIDE_LIGHT_INTENSITY_DEFAULT, withAnimation)
             this.setCTASpotLightBrightness(child, 0, withAnimation)
-            this.setArtworkCentered(child, true, withAnimation)
+            // this.setArtworkCentered(child, true, withAnimation)
         })
         // Update all slides that will move to the left wall
         leftIndices.forEach((pictureIndex, i) => {
@@ -156,7 +157,7 @@ export class Slider {
             this.setSpotLightTargetPositionZ(child, 0, withAnimation)
             this.setSpotLightBrightness(child, SLIDE_LIGHT_INTENSITY_DEFAULT, withAnimation)
             this.setCTASpotLightBrightness(child, 0, withAnimation)
-            this.setArtworkCentered(child, true, withAnimation)
+            // this.setArtworkCentered(child, true, withAnimation)
         })
 
         // Update the active slide
@@ -167,7 +168,7 @@ export class Slider {
         this.setSpotLightTargetPositionZ(activeSlide, SLIDE_LIGHT_TARGET_Z, withAnimation)
         this.setSpotLightBrightness(activeSlide, SLIDE_LIGHT_INTENSITY_HIGHLIGHT, withAnimation)
         this.setCTASpotLightBrightness(activeSlide, SLIDE_CTA_LIGHT_INTENSITY_HIGHLIGHT, withAnimation)
-        this.setArtworkCentered(activeSlide, false, withAnimation)
+        // this.setArtworkCentered(activeSlide, false, withAnimation)
     }
 
     // Helper function to update the position of a mesh with / without animation

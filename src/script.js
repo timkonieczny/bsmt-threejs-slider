@@ -18,7 +18,8 @@ gltfLoader.load("/models/Tunnel.glb", gltf => {
     const tunnel2 = tunnel.clone()
     tunnel.position.z = -10
     tunnel2.position.z = -45
-    sceneGroup.add(tunnel, tunnel2)
+    // sceneGroup.add(tunnel, tunnel2)
+    sceneGroup.add(tunnel)
 })
 
 // Canvas
@@ -26,7 +27,7 @@ const canvas = document.querySelector('canvas.webgl')
 
 // Scene
 const scene = new Scene()
-scene.fog = new Fog(CLEAR_COLOR, 80, 100)
+scene.fog = new Fog(CLEAR_COLOR, 80, 120)
 
 const sceneGroup = new Group()
 sceneGroup.scale.multiplyScalar(2)

@@ -19,6 +19,8 @@ const SLIDE_LIGHT_TARGET_Z = -.1
 const SLIDE_LIGHT_INTENSITY_DEFAULT = 10
 const SLIDE_LIGHT_INTENSITY_HIGHLIGHT = 100
 const SLIDE_CTA_LIGHT_INTENSITY_HIGHLIGHT = 100
+const SLIDE_BRIGHTNESS_DEFAULT = .5
+const SLIDE_BRIGHTNESS_HIGHTLIGHT = 1
 const ACTIVE_SLIDE_MESH_POSITION = {
     desktop: new Vector3(-.5, 0, 0),
     mobile: new Vector3(0, .25, 0)
@@ -147,6 +149,7 @@ export class Slider {
             this.setSpotLightBrightness(child, SLIDE_LIGHT_INTENSITY_DEFAULT, withAnimation)
             // this.setCTASpotLightBrightness(child, 0, withAnimation)
             // this.setArtworkCentered(child, true, withAnimation)
+            this.setArtworkMaterialBrightness(child, true, withAnimation)
         })
         // Update all slides that will move to the left wall
         leftIndices.forEach((pictureIndex, i) => {
@@ -157,6 +160,7 @@ export class Slider {
             this.setSpotLightBrightness(child, SLIDE_LIGHT_INTENSITY_DEFAULT, withAnimation)
             // this.setCTASpotLightBrightness(child, 0, withAnimation)
             // this.setArtworkCentered(child, true, withAnimation)
+            this.setArtworkMaterialBrightness(child, true, withAnimation)
         })
 
         // Update the active slide
@@ -168,6 +172,7 @@ export class Slider {
         this.setSpotLightBrightness(activeSlide, SLIDE_LIGHT_INTENSITY_HIGHLIGHT, withAnimation)
         // this.setCTASpotLightBrightness(activeSlide, SLIDE_CTA_LIGHT_INTENSITY_HIGHLIGHT, withAnimation)
         // this.setArtworkCentered(activeSlide, false, withAnimation)
+        this.setArtworkMaterialBrightness(activeSlide, false, withAnimation)
     }
 
     // Helper function to update the position of a mesh with / without animation
@@ -208,6 +213,24 @@ export class Slider {
             if (spotLight)
                 spotLight.position.copy(targetPosition)
         }
+    }
+
+    setArtworkMaterialBrightness(slide, isCentered, withAnimation = true) {
+        const mesh = this.getMesh(slide)
+        if (withAnimation) {
+            const animationObject = { brightness: mesh.material.color.r }
+            gsap.to(
+                animationObject,
+                {
+                    duration: 1,
+                    brightness: isCentered ? SLIDE_BRIGHTNESS_DEFAULT : SLIDE_BRIGHTNESS_HIGHTLIGHT,
+                    onUpdate: _ => {
+                        const { brightness } = animationObject
+                        mesh.material.color.setScalar(brightness)
+                    }
+                }
+            )
+        } else mesh.material.color.setScalar(isCentered ? SLIDE_BRIGHTNESS_DEFAULT : SLIDE_BRIGHTNESS_HIGHTLIGHT)
     }
 
     // Sets the z position of the spot light target of a given slide

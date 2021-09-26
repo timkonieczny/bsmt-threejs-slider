@@ -26,7 +26,7 @@ const canvas = document.querySelector('canvas.webgl')
 
 // Scene
 const scene = new Scene()
-scene.fog = new Fog(CLEAR_COLOR, 40, 60)
+scene.fog = new Fog(CLEAR_COLOR, 80, 100)
 
 const sceneGroup = new Group()
 sceneGroup.scale.multiplyScalar(2)

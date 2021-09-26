@@ -100,19 +100,19 @@ export class Slider {
 
         slide.add(spotLight)
         slide.add(spotLight.target)
-        const ctaSpotLight = new SpotLight()
-        ctaSpotLight.intensity = SLIDE_CTA_LIGHT_INTENSITY_HIGHLIGHT
-        ctaSpotLight.color.set(0xff3b7e)
-        ctaSpotLight.position.x = .5
-        ctaSpotLight.position.y = 0
-        ctaSpotLight.target.position.z = SLIDE_LIGHT_TARGET_Z
-        ctaSpotLight.target.position.x = ctaSpotLight.position.x
-        ctaSpotLight.target.position.y = -1
-        ctaSpotLight.angle = Math.PI * 0.2
-        ctaSpotLight.decay = .3
-        ctaSpotLight.penumbra = 1
-        slide.add(ctaSpotLight)
-        slide.add(ctaSpotLight.target)
+        // const ctaSpotLight = new SpotLight()
+        // ctaSpotLight.intensity = SLIDE_CTA_LIGHT_INTENSITY_HIGHLIGHT
+        // ctaSpotLight.color.set(0xff3b7e)
+        // ctaSpotLight.position.x = .5
+        // ctaSpotLight.position.y = 0
+        // ctaSpotLight.target.position.z = SLIDE_LIGHT_TARGET_Z
+        // ctaSpotLight.target.position.x = ctaSpotLight.position.x
+        // ctaSpotLight.target.position.y = -1
+        // ctaSpotLight.angle = Math.PI * 0.1
+        // ctaSpotLight.decay = .3
+        // ctaSpotLight.penumbra = 1
+        // slide.add(ctaSpotLight)
+        // slide.add(ctaSpotLight.target)
         slide.scale.setScalar(SLIDE_SCALE)
         // this.positionCSS3DObject(slide)
     }
@@ -145,7 +145,7 @@ export class Slider {
             this.setQuaternion(child, this.rightWallQuaternion, withAnimation)
             this.setSpotLightTargetPositionZ(child, 0, withAnimation)
             this.setSpotLightBrightness(child, SLIDE_LIGHT_INTENSITY_DEFAULT, withAnimation)
-            this.setCTASpotLightBrightness(child, 0, withAnimation)
+            // this.setCTASpotLightBrightness(child, 0, withAnimation)
             // this.setArtworkCentered(child, true, withAnimation)
         })
         // Update all slides that will move to the left wall
@@ -155,7 +155,7 @@ export class Slider {
             this.setQuaternion(child, this.leftWallQuaternion, withAnimation)
             this.setSpotLightTargetPositionZ(child, 0, withAnimation)
             this.setSpotLightBrightness(child, SLIDE_LIGHT_INTENSITY_DEFAULT, withAnimation)
-            this.setCTASpotLightBrightness(child, 0, withAnimation)
+            // this.setCTASpotLightBrightness(child, 0, withAnimation)
             // this.setArtworkCentered(child, true, withAnimation)
         })
 
@@ -166,7 +166,7 @@ export class Slider {
         this.setQuaternion(activeSlide, this.activeSlideQuaternion, withAnimation)
         this.setSpotLightTargetPositionZ(activeSlide, SLIDE_LIGHT_TARGET_Z, withAnimation)
         this.setSpotLightBrightness(activeSlide, SLIDE_LIGHT_INTENSITY_HIGHLIGHT, withAnimation)
-        this.setCTASpotLightBrightness(activeSlide, SLIDE_CTA_LIGHT_INTENSITY_HIGHLIGHT, withAnimation)
+        // this.setCTASpotLightBrightness(activeSlide, SLIDE_CTA_LIGHT_INTENSITY_HIGHLIGHT, withAnimation)
         // this.setArtworkCentered(activeSlide, false, withAnimation)
     }
 

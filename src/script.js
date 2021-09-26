@@ -45,10 +45,12 @@ sceneGroup.add(ambientLight)
 const lightDimensions = new Vector2(.8, 2.1)
 const ceilingLightGeometry = new PlaneBufferGeometry(lightDimensions.x, lightDimensions.y, 1, 1)
 const ceilingLightMaterial = new MeshBasicMaterial({ color: 0xc2d2f0 })
-const createCeilingLight = () => {
-    const ceilingLight = new PointLight(debug.ceilingLightColor, debug.ceilingLightIntensity)
+const createCeilingLight = (withLight = true) => {
     const ceilingLightGroup = new Group()
-    ceilingLightGroup.add(ceilingLight)
+    if (withLight) {
+        const ceilingLight = new PointLight(debug.ceilingLightColor, debug.ceilingLightIntensity)
+        ceilingLightGroup.add(ceilingLight)
+    }
     const ceilingLightMesh = new Mesh(ceilingLightGeometry, ceilingLightMaterial)
     ceilingLightGroup.add(ceilingLightMesh)
     ceilingLightGroup.rotation.x = Math.PI / 2
@@ -56,7 +58,7 @@ const createCeilingLight = () => {
     return ceilingLightGroup
 }
 
-const ceilingLight1 = createCeilingLight()
+const ceilingLight1 = createCeilingLight(false)
 ceilingLight1.position.z = -6.3
 sceneGroup.add(ceilingLight1)
 const ceilingLight2 = createCeilingLight()
